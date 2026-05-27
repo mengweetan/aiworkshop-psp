@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSP AI Workshop — 27 June 2026</title>
+<style>
+  :root {
+    --husky-blue: #4a90c2;
+    --husky-blue-dark: #2d6a96;
+    --husky-charcoal: #1f2d3d;
+    --husky-grey: #5a6878;
+    --husky-cream: #faf7f0;
+    --sagelion-gold: #f5c542;
+    --sagelion-amber: #e89c2a;
+    --accent-soft: #eaf2f9;
+    --border: #d8dee6;
+    --shadow: 0 4px 14px rgba(31, 45, 61, 0.08);
+    --shadow-lg: 0 12px 40px rgba(31, 45, 61, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(180deg, var(--husky-cream) 0%, #ffffff 300px);
+    color: var(--husky-charcoal);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* --- HEADER / BANNER --- */
+  .banner {
+    position: relative;
+    background: #ffffff;
+    color: var(--husky-charcoal);
+    padding: 0;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .banner-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 36px;
+    align-items: center;
+    padding: 36px 40px;
+  }
+  .banner-logo {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .banner-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .banner-text h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .banner-text .subtitle {
+    font-size: 1.1rem;
+    color: var(--husky-blue-dark);
+    font-weight: 600;
+  }
+  .banner-text .meta {
+    margin-top: 12px;
+    font-size: 0.95rem;
+    color: var(--husky-grey);
+  }
+  .banner-image {
+    overflow: hidden;
+    width: 220px;
+    height: 220px;
+  }
+  .banner-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .soul-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(245, 197, 66, 0.18);
+    border: 1px solid rgba(245, 197, 66, 0.4);
+    color: var(--sagelion-gold);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 14px;
+  }
+
+  /* --- TAB NAVIGATION --- */
+  .tab-nav-wrap {
+    position: sticky;
+    top: 0;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(31,45,61,0.04);
+  }
+  .tab-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .tab-button {
+    background: none;
+    border: none;
+    padding: 16px 18px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--husky-grey);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .tab-button:hover {
+    color: var(--husky-blue-dark);
+    background: var(--accent-soft);
+  }
+  .tab-button.active {
+    color: var(--husky-blue-dark);
+    border-bottom-color: var(--sagelion-gold);
+  }
+  .tab-button .tab-num {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--husky-blue-dark);
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 0.75rem;
+    margin-right: 6px;
+  }
+  .tab-button.active .tab-num {
+    background: var(--sagelion-gold);
+    color: var(--husky-charcoal);
+  }
+
+  /* --- CONTENT --- */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+  .tab-panel { display: none; animation: fadeIn 0.35s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--accent-soft);
+  }
+  .panel-header .icon {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, var(--sagelion-gold), var(--sagelion-amber));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--husky-charcoal);
+    font-weight: 800;
+    box-shadow: var(--shadow);
+  }
+  .panel-header h2 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--husky-charcoal);
+    letter-spacing: -0.02em;
+  }
+  .panel-header .speaker {
+    font-size: 0.95rem;
+    color: var(--husky-grey);
+    margin-top: 4px;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    color: var(--husky-blue-dark);
+    margin-top: 32px;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  h4 {
+    font-size: 1.05rem;
+    color: var(--husky-charcoal);
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 8px 0 14px 22px; }
+  li { margin-bottom: 6px; }
+  strong { color: var(--husky-charcoal); font-weight: 700; }
+  em { color: var(--husky-grey); }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* --- TABLES --- */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 16px 0 24px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    font-size: 0.93rem;
+  }
+  thead {
+    background: linear-gradient(135deg, var(--husky-blue-dark), var(--husky-blue));
+    color: white;
+  }
+  th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.88rem;
+    letter-spacing: 0.02em;
+  }
+  td {
+    padding: 12px 14px;
+    border-top: 1px solid var(--accent-soft);
+    vertical-align: top;
+  }
+  tbody tr:hover { background: var(--husky-cream); }
+
+  /* --- CODE BLOCK --- */
+  pre {
+    background: var(--husky-charcoal);
+    color: #e0e7ef;
+    padding: 18px 22px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    margin: 14px 0 22px;
+    font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
+    box-shadow: var(--shadow);
+  }
+
+  /* --- CARDS --- */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 18px 0;
+  }
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+  .card-title {
+    color: var(--husky-blue-dark);
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .pill {
+    background: var(--sagelion-gold);
+    color: var(--husky-charcoal);
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  /* --- CALLOUT --- */
+  .callout {
+    background: linear-gradient(135deg, var(--accent-soft), white);
+    border-left: 4px solid var(--sagelion-gold);
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 18px 0;
+    box-shadow: var(--shadow);
+  }
+  .callout strong { color: var(--husky-blue-dark); }
+
+  .husky-quote {
+    background: linear-gradient(135deg, var(--husky-charcoal), var(--husky-blue-dark));
+    color: white;
+    padding: 24px 28px 24px 84px;
+    border-radius: 14px;
+    margin: 22px 0;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+  }
+  .husky-quote::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 18px;
+    width: 52px;
+    height: 52px;
+    background-image: url("assets/SOUL.png");
+    background-size: cover;
+    background-position: center;
+  }
+  .husky-quote .quote-label {
+    color: var(--sagelion-gold);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  /* --- SOUL FEATURE --- */
+  .soul-feature {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 28px;
+    align-items: center;
+    background: linear-gradient(135deg, #0b1929 0%, var(--husky-blue-dark) 100%);
+    color: white;
+    padding: 28px;
+    border-radius: 16px;
+    margin: 22px 0;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+  }
+  .soul-feature::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(74,144,194,0.35), transparent 60%);
+    pointer-events: none;
+  }
+  .soul-feature img {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  .soul-feature-text { position: relative; z-index: 1; }
+  .soul-feature-text .label {
+    color: var(--sagelion-gold);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .soul-feature-text h3 {
+    color: white;
+    font-size: 1.7rem;
+    margin: 0 0 10px 0;
+    border: none;
+  }
+  .soul-feature-text p {
+    color: rgba(255,255,255,0.88);
+    font-size: 1rem;
+    margin: 0;
+  }
+  @media (max-width: 720px) {
+    .soul-feature { grid-template-columns: 1fr; text-align: center; }
+    .soul-feature img { max-width: 220px; margin: 0 auto; }
+  }
+
+  /* --- FOOTER --- */
+  footer {
+    background: var(--husky-charcoal);
+    color: rgba(255,255,255,0.75);
+    padding: 32px 40px;
+    text-align: center;
+    margin-top: 60px;
+  }
+  footer .brand {
+    color: var(--sagelion-gold);
+    font-weight: 700;
+  }
+  footer a { color: var(--sagelion-gold); text-decoration: none; }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 860px) {
+    .banner-inner { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+    .banner-logo { width: 160px; height: 160px; }
+    .banner-text h1 { font-size: 1.9rem; }
+    main { padding: 24px 18px; }
+    .tab-nav { padding: 0 18px; }
+    .tab-button { padding: 14px 12px; font-size: 0.85rem; }
+    .panel-header h2 { font-size: 1.4rem; }
+    table { font-size: 0.82rem; }
+    th, td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="banner">
+  <div class="banner-inner">
+    <div class="banner-logo">
+      <img src="assets/psp-logo.jpg" alt="Progress Singapore Party" />
+    </div>
+    <div class="banner-text">
+      <h1>PSP AI Workshop</h1>
+      <div class="subtitle">From Generative to Agentic</div>
+      <div class="meta">27 June 2026 · Saturday · 2–5pm · Progress Singapore Party</div>
+    </div>
+  </div>
+</header>
+
+<nav class="tab-nav-wrap">
+  <div class="tab-nav" role="tablist">
+    <button class="tab-button active" data-tab="overview" role="tab"><span class="tab-num">●</span>Overview</button>
+    <button class="tab-button" data-tab="intro" role="tab"><span class="tab-num">1</span>AI Intro & Governance</button>
+    <button class="tab-button" data-tab="agents" role="tab"><span class="tab-num">2</span>AI Agents</button>
+    <button class="tab-button" data-tab="risk" role="tab"><span class="tab-num">3</span>Risk & Deployment</button>
+    <button class="tab-button" data-tab="demo" role="tab"><span class="tab-num">4</span>Possible Applications</button>
+    <button class="tab-button" data-tab="cases" role="tab"><span class="tab-num">5</span>Case Studies</button>
+    <button class="tab-button" data-tab="handson" role="tab"><span class="tab-num">6</span>Hands-On</button>
+    <button class="tab-button" data-tab="conclusion" role="tab"><span class="tab-num">7</span>Conclusion</button>
+    <button class="tab-button" data-tab="appendix" role="tab"><span class="tab-num">+</span>Appendix</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ====================== OVERVIEW ====================== -->
+<section class="tab-panel active" id="overview">
+  <div class="panel-header">
+    <div class="icon">★</div>
+    <div>
+      <h2>Workshop Overview</h2>
+      <div class="speaker">3 hours · 7 sections · 4 case studies · 1 husky</div>
+    </div>
+  </div>
+
+  <h3>Session Structure</h3>
+  <table>
+    <thead><tr><th>#</th><th>Topic</th><th>Speaker(s)</th><th>Duration</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>AI Introduction and Governance</td><td>Harish</td><td>20 min</td></tr>
+      <tr><td>2</td><td>Overview of AI Agents</td><td>CS Chong</td><td>15 min</td></tr>
+      <tr><td>3</td><td>Risk and Deployment Model</td><td>MengWee</td><td>15 min</td></tr>
+      <tr><td>4</td><td>Possible Applications & Deep Dive into AI Agents</td><td>MengWee</td><td>30 min</td></tr>
+      <tr><td>5a</td><td>Case Study: RE Brokering</td><td>MengWee / Anthony</td><td>15 min</td></tr>
+      <tr><td>5b</td><td>Case Study: Event Registration</td><td>ZX</td><td>15 min</td></tr>
+      <tr><td>5c</td><td>Case Study: Email Marketing AI</td><td>Teddy</td><td>15 min</td></tr>
+      <tr><td>6</td><td>Group Discussion / Hands-on & Presentation</td><td>CS Chong, MengWee, Anthony, Harish</td><td>60 min</td></tr>
+      <tr><td>7</td><td>Conclusion</td><td>SecGen</td><td>10 min</td></tr>
+      <tr><td></td><td><strong>Total</strong></td><td></td><td><strong>195 min (3h 15m)</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">Practical AI <span class="pill">Track 1</span></div>
+      <p>From simple Generative to Agentic AI. Property management, grant documentation, workflow automation, data security.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Creative Digital <span class="pill">Track 2</span></div>
+      <p>AI-generated entertainment. Anime-style movie production ('Inotgrumpy' movie), modern digital ecosystem storytelling.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== AI INTRO ====================== -->
+<section class="tab-panel" id="intro">
+  <div class="panel-header">
+    <div class="icon">1</div>
+    <div>
+      <h2>AI Introduction & Governance</h2>
+      <div class="speaker">Harish · 20 minutes</div>
+    </div>
+  </div>
+
+  <h3>What AI Actually Is</h3>
+  <p>Three layers of the modern AI stack:</p>
+  <table>
+    <thead><tr><th>Layer</th><th>Function</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td>Foundation Models</td><td>Pattern recognition, generation</td><td>GPT-4, Kimi, Gemini, Claude</td></tr>
+      <tr><td>Agent Frameworks</td><td>Orchestration — AI → tools, data, APIs</td><td>OpenClaw, LangChain, n8n</td></tr>
+      <tr><td>Business Applications</td><td>Your workflow</td><td>Custom solutions, SaaS platforms</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><strong>Key distinction:</strong> Generative AI creates content. Agentic AI executes tasks.</div>
+
+  <h3>The 4 Types of AI Tools</h3>
+  <p>Not all AI is the same. Understanding the categories helps you pick the right tool for the job:</p>
+  <table>
+    <thead><tr><th>Type</th><th>What It Does</th><th>Examples</th><th>Best For</th></tr></thead>
+    <tbody>
+      <tr><td><strong>i. Generative AI</strong></td><td>Creates new content — text, images, audio, video</td><td>Dola, OpenArt, ChatGPT, and many more</td><td>Drafting, brainstorming, content creation</td></tr>
+      <tr><td><strong>ii. Coding AI</strong></td><td>Writes, completes, and refactors code</td><td>Codex, Claude</td><td>Software development, automation scripts</td></tr>
+      <tr><td><strong>iii. Web-based AI</strong></td><td>Browser-native assistants that read, research, summarize</td><td>Claude.ai, Comet, NotebookLM</td><td>Research, document Q&amp;A, knowledge work</td></tr>
+      <tr><td><strong>iv. Agentic AI</strong></td><td>Autonomously executes multi-step tasks using tools and data</td><td>OpenClaw, Hermes Agent, DeerFlow</td><td>Workflow automation, end-to-end processes</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><strong>Rule of thumb:</strong> Generative AI <em>creates</em>, Coding AI <em>builds</em>, Web-based AI <em>researches</em>, Agentic AI <em>does</em>. Today's workshop focuses primarily on <strong>Agentic AI</strong> — the category with the highest leverage for PSP workflows.</div>
+
+  <h3>AI Governance Framework</h3>
+  <h4>Core Principles</h4>
+  <ol>
+    <li><strong>Data sovereignty</strong> — Where does your data go? Who controls it?</li>
+    <li><strong>Transparency</strong> — Can you audit AI actions and decisions?</li>
+    <li><strong>Accountability</strong> — Who's responsible when AI makes mistakes?</li>
+    <li><strong>Privacy compliance</strong> — PDPA requirements for SG organizations</li>
+    <li><strong>Human oversight</strong> — Critical checkpoints for high-stakes decisions</li>
+  </ol>
+
+  <h4>Risk Categories</h4>
+  <table>
+    <thead><tr><th>Risk Type</th><th>Examples</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>Data leakage</td><td>Sensitive info sent to public AI</td><td>Private/local deployment</td></tr>
+      <tr><td>Hallucination</td><td>AI invents facts, cites non-existent sources</td><td>Verification layers, source attribution</td></tr>
+      <tr><td>Bias</td><td>Discriminatory outputs in hiring, lending</td><td>Regular audits, diverse training data</td></tr>
+      <tr><td>Compliance</td><td>PDPA, sector-specific regulations</td><td>Audit trails, data residency controls</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Singapore Context</h4>
+  <ul>
+    <li>Model AI Governance Framework by IMDA/PDPC</li>
+    <li>Advisory Guidelines on Use of Personal Data in AI Recommender Systems</li>
+    <li>Revised PDPA provisions on accountability and data portability</li>
+    <li>67% of SMEs aware of AI, but only 4% deployed correctly</li>
+  </ul>
+
+  <h4>Governance Checklist for PSP</h4>
+  <ul>
+    <li>☐ Data classification (public / internal / confidential / restricted)</li>
+    <li>☐ Approved AI tools register</li>
+    <li>☐ Training policy for staff using AI</li>
+    <li>☐ Incident response protocol</li>
+    <li>☐ Quarterly governance review</li>
+  </ul>
+</section>
+
+<!-- ====================== AGENTS ====================== -->
+<section class="tab-panel" id="agents">
+  <div class="panel-header">
+    <div class="icon">2</div>
+    <div>
+      <h2>Overview of AI Agents</h2>
+      <div class="speaker">CS Chong · 15 minutes</div>
+    </div>
+  </div>
+
+  <h3>From Chatbots to Agents</h3>
+  <table>
+    <thead><tr><th>Traditional Chatbot</th><th>AI Agent</th></tr></thead>
+    <tbody>
+      <tr><td>Responds to prompts</td><td>Proactively monitors and acts</td></tr>
+      <tr><td>No memory between sessions</td><td>Persistent memory and context</td></tr>
+      <tr><td>Text in, text out</td><td>Can access files, APIs, databases, tools</td></tr>
+      <tr><td>One conversation at a time</td><td>Can run scheduled tasks, parallel workflows</td></tr>
+      <tr><td>No external actions</td><td>Can send emails, update records, trigger processes</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Agent Architecture</h3>
+  <pre>User (Telegram / WhatsApp / Web / Email)
+    ↓
+Gateway (AI orchestration layer)
+    ↓
+Skills (Calendar, Email, Files, Search, APIs, Databases)
+    ↓
+Models (GPT-4, Claude, Kimi, Gemini — hot-swappable)
+    ↓
+Data Sources (Vector DB memory, Filesystem, APIs, CRM, ERP)</pre>
+
+  <h3>Real Agent Capabilities</h3>
+  <p>Example tasks an agent can handle:</p>
+  <ol>
+    <li>"Find all emails about Project Orchard, extract action items, update project tracker"</li>
+    <li>"Check calendar conflicts next week, suggest 2-hour meeting slot with attendees"</li>
+    <li>"Monitor event registrations, send confirmation emails, update attendee database"</li>
+    <li>"Summarize last month's marketing campaign performance from GA4 and email stats"</li>
+    <li>"Draft quarterly board report using finance data, approve before sending"</li>
+  </ol>
+
+  <h3>Privacy & Control</h3>
+  <div class="card-grid">
+    <div class="card"><div class="card-title">Local-first</div><p>Agent runs on your infrastructure.</p></div>
+    <div class="card"><div class="card-title">Selective cloud</div><p>Models only, not your data.</p></div>
+    <div class="card"><div class="card-title">Audit trails</div><p>Every action logged and reviewable.</p></div>
+    <div class="card"><div class="card-title">Opt-in sharing</div><p>No data used for training without consent.</p></div>
+  </div>
+</section>
+
+<!-- ====================== RISK ====================== -->
+<section class="tab-panel" id="risk">
+  <div class="panel-header">
+    <div class="icon">3</div>
+    <div>
+      <h2>Risk and Deployment Model</h2>
+      <div class="speaker">MengWee · 15 minutes</div>
+    </div>
+  </div>
+
+  <h3>Risk Assessment Framework</h3>
+  <p>Risk Matrix for AI Deployment:</p>
+  <table>
+    <thead><tr><th>Impact Level</th><th>Low Risk</th><th>Medium Risk</th><th>High Risk</th><th>Critical Risk</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Examples</strong></td><td>Meeting summaries, draft emails</td><td>Data analysis, report generation</td><td>Customer-facing comms, financial records</td><td>Legal compliance, medical decisions</td></tr>
+      <tr><td><strong>Human Review</strong></td><td>Spot-check</td><td>Review before use</td><td>Approve every output</td><td>Multiple approvals + audit</td></tr>
+      <tr><td><strong>Rollout</strong></td><td>Immediate</td><td>Pilot with 2-3 users</td><td>Staged with metrics</td><td>Extended pilot + compliance review</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Deployment Models</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">Option 1: Cloud SaaS</div>
+      <p>✅ Fast setup · ✅ Low upfront cost · ⚠️ Data leaves your control · ⚠️ Subscription per user</p>
+      <p><strong>Best for:</strong> Small teams, low-sensitivity data, quick pilots.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Option 2: On-Premise</div>
+      <p>✅ Full data control · ✅ PDPA-friendly · ✅ Customizable · ⚠️ Higher setup · ⚠️ Needs IT support</p>
+      <p><strong>Best for:</strong> Medium-large orgs, sensitive data, regulatory requirements.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Option 3: Hybrid</div>
+      <p>✅ Sensitive data on-prem, models in cloud · ✅ Balanced control · ⚠️ More complex architecture</p>
+      <p><strong>Best for:</strong> Organizations with mixed data sensitivity.</p>
+    </div>
+  </div>
+
+  <h3>PSP-Specific Considerations</h3>
+  <h4>Data Sensitivity Zones</h4>
+  <ul>
+    <li><strong>Public:</strong> Event details, general announcements → any AI model OK</li>
+    <li><strong>Internal:</strong> Member lists, attendance records → private deployment preferred</li>
+    <li><strong>Confidential:</strong> Financial data, personal member info → on-premise required</li>
+    <li><strong>Restricted:</strong> Governance documents, personnel matters → human-only, AI-assisted summaries max</li>
+  </ul>
+
+  <h4>Recommended Approach</h4>
+  <ol>
+    <li><strong>Phase 1 (Month 1–2):</strong> Pilot with 3–5 staff on low-risk tasks</li>
+    <li><strong>Phase 2 (Month 3–4):</strong> Expand to medium-risk workflows</li>
+    <li><strong>Phase 3 (Month 5–6):</strong> Full deployment with governance + audit review</li>
+  </ol>
+
+  <h4>Success Metrics</h4>
+  <ul>
+    <li>Time saved per user per week</li>
+    <li>Error rate (AI mistakes requiring human correction)</li>
+    <li>User adoption rate</li>
+    <li>Task completion speed (before / after)</li>
+    <li>Security incidents (target: zero)</li>
+  </ul>
+</section>
+
+<!-- ====================== DEMO ====================== -->
+<section class="tab-panel" id="demo">
+  <div class="panel-header">
+    <div class="icon">4</div>
+    <div>
+      <h2>Possible Applications & Deep Dive into AI Agents</h2>
+      <div class="speaker">MengWee · 30 minutes</div>
+    </div>
+  </div>
+
+  <h3>Possible Applications — What an AI Agent Could Do</h3>
+  <p>These are illustrative scenarios — not live deployments. They show the kinds of workflows an agent platform like OpenClaw could handle once integrated with your tools.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">Scenario 1 <span class="pill">5 min</span></div>
+      <p><strong>Email Intelligence</strong> — "Show me all emails from committee about June events, extract action items"</p>
+      <p><em>Would demonstrate:</em> Email integration, semantic search, structured extraction.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Scenario 2 <span class="pill">5 min</span></div>
+      <p><strong>Calendar Coordination</strong> — "Find 2-hour slot next week for 4 people, avoid lunch hours"</p>
+      <p><em>Would demonstrate:</em> Multi-calendar access, constraint handling, natural language.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Scenario 3 <span class="pill">5 min</span></div>
+      <p><strong>Event Registration</strong> — "New registration: John Tan, vegetarian, john@example.com"</p>
+      <p><em>Would demonstrate:</em> Multi-system integration, data validation, automated follow-up.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Scenario 4 <span class="pill">5 min</span></div>
+      <p><strong>Document Intelligence</strong> — "Summarize last board meeting minutes, highlight pending decisions"</p>
+      <p><em>Would demonstrate:</em> Document understanding, extraction, context awareness.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Scenario 5 <span class="pill">5 min</span></div>
+      <p><strong>Proactive Monitoring</strong> — Agent: "Registration deadline tomorrow, 12 spots left, send reminder?"</p>
+      <p><em>Would demonstrate:</em> Proactive behavior, scheduled tasks, approval workflows.</p>
+    </div>
+  </div>
+
+  <h3>Architecture Deep Dive (5 min)</h3>
+  <pre>┌─────────────────────────────────────────────┐
+│  User Interfaces                             │
+│  (WhatsApp, Telegram, Email, Web, Voice)    │
+└─────────────────┬───────────────────────────┘
+                  │
+┌─────────────────▼───────────────────────────┐
+│  OpenClaw Gateway (Orchestration)            │
+│  · Session management                        │
+│  · Context + memory                          │
+│  · Multi-agent coordination                  │
+└─────────────────┬───────────────────────────┘
+                  │
+┌─────────────────▼───────────────────────────┐
+│  Skills Layer (Tools + Integrations)         │
+│  Email · Calendar · Files · Search · APIs    │
+└─────────────────┬───────────────────────────┘
+                  │
+┌─────────────────▼───────────────────────────┐
+│  AI Models (Hot-swappable)                   │
+│  GPT-4 · Claude · Gemini · Kimi · Local      │
+└─────────────────┬───────────────────────────┘
+                  │
+┌─────────────────▼───────────────────────────┐
+│  Data Layer                                  │
+│  Vector DB · SQL · Filesystem · APIs         │
+└─────────────────────────────────────────────┘</pre>
+
+  <div class="callout">
+    <strong>Key Features:</strong> Skills (modular capabilities) · Memory (persistent context) · Multi-channel (same agent, many interfaces) · Audit log (every action recorded) · Fail-safe (asks permission for high-risk actions).
+  </div>
+</section>
+
+<!-- ====================== CASES ====================== -->
+<section class="tab-panel" id="cases">
+  <div class="panel-header">
+    <div class="icon">5</div>
+    <div>
+      <h2>Case Studies</h2>
+      <div class="speaker">MengWee / Anthony · ZX · Teddy · 45 minutes total</div>
+    </div>
+  </div>
+
+  <h3>5a. RE Brokering AI <span style="font-size:0.85rem; color:var(--husky-grey); font-weight:400;">— MengWee / Anthony, 15 min</span></h3>
+  <h4>Client: Nejilock Technology</h4>
+  <p><strong>Segment:</strong> Property brokerage (40+ agents)</p>
+
+  <h4>Problem Statement</h4>
+  <ul>
+    <li>Agents spent <strong>60% time on admin</strong>, only <strong>40% on revenue work</strong></li>
+    <li>Manual process: inquiries → search portals → copy-paste → phone-tag scheduling → forgotten follow-ups</li>
+    <li>Lead-to-viewing conversion: 20%</li>
+    <li>Agent burnout from repetitive tasks</li>
+  </ul>
+
+  <h4>Workflow Transformation</h4>
+  <table>
+    <thead><tr><th>Before (Manual)</th><th>After (AI-Assisted)</th><th>Time Saved</th></tr></thead>
+    <tbody>
+      <tr><td>Search 3–5 portals, copy-paste 20–30 listings</td><td>Agent auto-searches, ranks by fit, sends top 10</td><td>45 min → 5 min</td></tr>
+      <tr><td>Schedule viewings via calls/texts</td><td>Agent coordinates with all parties, proposes slots</td><td>30 min → 5 min</td></tr>
+      <tr><td>Manual follow-ups (often missed)</td><td>Agent auto-follows up at day 3, 7, 14</td><td>20 min → 0 min</td></tr>
+      <tr><td>Status updates to manager</td><td>Auto-logged in dashboard</td><td>15 min → 0 min</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Results (After 3 Months)</h4>
+  <div class="card-grid">
+    <div class="card"><div class="card-title">Admin time</div><p>60% → <strong>15%</strong> (freed 18h/week per agent)</p></div>
+    <div class="card"><div class="card-title">Conversion</div><p>20% → <strong>60%</strong> (3× improvement)</p></div>
+    <div class="card"><div class="card-title">Viewings</div><p>3/week → <strong>8/week</strong> per agent</p></div>
+    <div class="card"><div class="card-title">ROI</div><p>Break-even at 4 months · Delivered in 12 weeks</p></div>
+  </div>
+
+  <div class="callout">
+    <strong>Key Lesson:</strong> AI doesn't replace agents. It removes the friction that prevents them from closing deals. The brokerage invested in AI to amplify their agents, not cut headcount.
+  </div>
+
+  <hr />
+
+  <h3>5b. Event Registration <span style="font-size:0.85rem; color:var(--husky-grey); font-weight:400;">— ZX, 15 min</span></h3>
+  <p><em>[Suggested outline — to be expanded by ZhengXun]</em></p>
+
+  <h4>Problem Statement</h4>
+  <ul>
+    <li>Manual registration prone to errors</li>
+    <li>Email confirmation delays (24–48h)</li>
+    <li>Difficulty tracking dietary requirements / accessibility needs</li>
+    <li>Last-minute changes require manual spreadsheet updates</li>
+    <li>No automated reminders → high no-show rate</li>
+  </ul>
+
+  <h4>Solution Architecture</h4>
+  <ul>
+    <li>Web form → AI agent → Database → Email confirmation (instant)</li>
+    <li>Agent validates input (duplicate check, field validation)</li>
+    <li>Auto-sends personalized confirmation with event details</li>
+    <li>Syncs with calendar invites; scheduled reminders T-7, T-1</li>
+    <li>Handles cancellations / changes via email reply</li>
+  </ul>
+
+  <h4>Results</h4>
+  <table>
+    <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
+    <tbody>
+      <tr><td>Confirmation time</td><td>24 hours</td><td>2 minutes</td></tr>
+      <tr><td>Data entry errors</td><td>8%</td><td>0.5%</td></tr>
+      <tr><td>No-show rate</td><td>18%</td><td>6%</td></tr>
+      <tr><td>Staff time per event</td><td>12 hours</td><td>1.5 hours</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Tech Stack</h4>
+  <p>Form: Typeform / Google Forms · Agent: n8n + OpenClaw · DB: Airtable / Baserow · Email: SendGrid / Postmark</p>
+
+  <hr />
+
+  <h3>5c. Email Marketing AI <span style="font-size:0.85rem; color:var(--husky-grey); font-weight:400;">— Teddy, 15 min</span></h3>
+  <p><em>[Suggested outline — to be expanded by Teddy]</em></p>
+
+  <h4>Problem Statement</h4>
+  <ul>
+    <li>Generic mass emails → low engagement</li>
+    <li>Manual segmentation time-consuming</li>
+    <li>A/B testing requires separate campaigns</li>
+    <li>Tracking opens/clicks across platforms</li>
+    <li>Writing compelling copy takes hours per campaign</li>
+  </ul>
+
+  <h4>Solution Components</h4>
+  <ol>
+    <li><strong>Audience segmentation agent</strong> — analyzes behavior, builds targeted lists</li>
+    <li><strong>Copy generation</strong> — drafts 3 variants per segment (formal / casual / promotional)</li>
+    <li><strong>Send-time optimization</strong> — best send-time per segment</li>
+    <li><strong>Performance monitoring</strong> — tracks opens, clicks, conversions in real-time</li>
+    <li><strong>Follow-up automation</strong> — re-engages non-openers with a different angle</li>
+  </ol>
+
+  <h4>Results</h4>
+  <table>
+    <thead><tr><th>Metric</th><th>Before</th><th>After</th></tr></thead>
+    <tbody>
+      <tr><td>Open rate</td><td>22%</td><td>38%</td></tr>
+      <tr><td>Click-through rate</td><td>3.5%</td><td>8.2%</td></tr>
+      <tr><td>Campaign prep time</td><td>6 hours</td><td>45 minutes</td></tr>
+      <tr><td>Revenue per campaign</td><td>—</td><td>+65%</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Best Practices</h4>
+  <ul>
+    <li>Always include unsubscribe (PDPA compliance)</li>
+    <li>Human review before send (esp. sensitive topics)</li>
+    <li>Test with small segment first</li>
+    <li>Monitor spam score</li>
+    <li>Respect frequency caps (max 1/week for most audiences)</li>
+  </ul>
+</section>
+
+<!-- ====================== HANDS-ON ====================== -->
+<section class="tab-panel" id="handson">
+  <div class="panel-header">
+    <div class="icon">6</div>
+    <div>
+      <h2>Group Discussion / Hands-On & Presentation</h2>
+      <div class="speaker">CS Chong, MengWee, Anthony, Harish · 60 minutes</div>
+    </div>
+  </div>
+
+  <h3>Setup (5 min)</h3>
+  <ul>
+    <li>Divide into <strong>3–4 groups</strong> (7–8 people each)</li>
+    <li>Each group gets <strong>1 laptop/mobile with OpenClaw access</strong></li>
+    <li>Facilitators: <strong>CS Chong, MengWee, Anthony, Harish</strong> (1 per group)</li>
+  </ul>
+
+  <h3>Part 1: Use Case Brainstorm (15 min)</h3>
+  <p>Each group identifies <strong>one PSP workflow</strong> that could benefit from AI.</p>
+  <div class="card-grid">
+    <div class="card"><div class="card-title">Events</div><p>Registration, reminders, post-event surveys, photo organization</p></div>
+    <div class="card"><div class="card-title">Communications</div><p>Newsletter drafting, member inquiries, announcement scheduling</p></div>
+    <div class="card"><div class="card-title">Operations</div><p>Meeting minutes, action item tracking, document search</p></div>
+    <div class="card"><div class="card-title">Finance</div><p>Expense logging, reimbursement tracking, budget monitoring</p></div>
+    <div class="card"><div class="card-title">Membership</div><p>Onboarding, renewal reminders, engagement tracking</p></div>
+  </div>
+  <div class="callout"><strong>Deliverable:</strong> 1-page workflow map (current state → pain points → AI opportunity).</div>
+
+  <h3>Part 2: Hands-On Demo (25 min)</h3>
+  <p>Each group tests their workflow with OpenClaw. Station tasks:</p>
+  <ol>
+    <li>Text a real request to the agent (WhatsApp / Telegram)</li>
+    <li>See it access your data (calendar, email, files — demo environment)</li>
+    <li>Review the output</li>
+    <li>Iterate the prompt ("make it more formal", "add deadline reminder")</li>
+    <li>Check the audit log (what did the agent actually do?)</li>
+  </ol>
+
+  <h4>Example Tasks by Group</h4>
+  <ul>
+    <li><strong>Group 1:</strong> "Draft welcome email for new member with PSP intro, upcoming events, membership benefits"</li>
+    <li><strong>Group 2:</strong> "Find all committee meeting minutes from Q1, extract pending action items"</li>
+    <li><strong>Group 3:</strong> "Check event calendar, identify conflicts with public holidays, suggest reschedules"</li>
+    <li><strong>Group 4:</strong> "Analyze last 3 months of email opens, identify least engaged segment, draft re-engagement email"</li>
+  </ul>
+
+  <h3>Part 3: Group Presentations (15 min)</h3>
+  <p>Each group presents (3 min each):</p>
+  <ol>
+    <li><strong>Workflow</strong> we tested</li>
+    <li><strong>What worked</strong> (show actual output)</li>
+    <li><strong>What surprised us</strong> (good and bad)</li>
+    <li><strong>Next steps</strong> (would we actually deploy this?)</li>
+  </ol>
+
+  <h3>Part 4: Open Q&amp;A (5 min)</h3>
+  <ul>
+    <li><strong>"What if the AI gets it wrong?"</strong> → Human review checkpoints</li>
+    <li><strong>"Can we use our existing tools?"</strong> → API integrations</li>
+    <li><strong>"How much technical skill needed?"</strong> → Natural language, no coding</li>
+    <li><strong>"What's the cost?"</strong> → See Appendix pricing</li>
+    <li><strong>"How do we start?"</strong> → Pilot program (Conclusion tab)</li>
+  </ul>
+</section>
+
+<!-- ====================== CONCLUSION ====================== -->
+<section class="tab-panel" id="conclusion">
+  <div class="panel-header">
+    <div class="icon">7</div>
+    <div>
+      <h2>Conclusion</h2>
+      <div class="speaker">SecGen · 10 minutes</div>
+    </div>
+  </div>
+
+  <h3>Key Takeaways</h3>
+  <div class="card-grid">
+    <div class="card"><div class="card-title">1. Agents ≠ Chatbots</div><p>They act, not just respond.</p></div>
+    <div class="card"><div class="card-title">2. Governance First</div><p>Define boundaries before deployment.</p></div>
+    <div class="card"><div class="card-title">3. Start Small</div><p>Pilot one workflow, measure, iterate.</p></div>
+    <div class="card"><div class="card-title">4. Human Oversight</div><p>AI proposes, humans approve high-stakes actions.</p></div>
+    <div class="card"><div class="card-title">5. Data Sovereignty</div><p>You control where data goes and who trains on it.</p></div>
+  </div>
+
+  <h3>PSP Pilot Program (Proposed)</h3>
+  <h4>Phase 1 — 90-Day Pilot (July – September 2026)</h4>
+  <table>
+    <thead><tr><th>Element</th><th>Details</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Scope</strong></td><td>2–3 workflows (e.g. event registration + newsletter drafting)</td></tr>
+      <tr><td><strong>Users</strong></td><td>5–10 staff / volunteers</td></tr>
+      <tr><td><strong>Cost</strong></td><td>SGD 500 setup + SGD 100/month (subsidized for PSP)</td></tr>
+      <tr><td><strong>Support</strong></td><td>2 training sessions + weekly check-ins</td></tr>
+      <tr><td><strong>Success criteria</strong></td><td>5+ hours saved per user per week · Zero security incidents · 80% user satisfaction</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Phase 2 — Full Rollout (October 2026+)</h4>
+  <ul>
+    <li>Expand to all suitable workflows</li>
+    <li>On-premise deployment option</li>
+    <li>Custom integrations (membership system, finance tools)</li>
+    <li>Train PSP staff as AI workflow designers</li>
+  </ul>
+
+  <h3>Next Steps</h3>
+  <div class="card-grid">
+    <div class="card"><div class="card-title">Today</div><p>Fill out feedback form (QR code). Sign up for pilot (limited to 10 slots).</p></div>
+    <div class="card"><div class="card-title">This Week</div><p>Receive personalized follow-up email with slides, recordings, governance checklist, pilot details.</p></div>
+    <div class="card"><div class="card-title">Within 1 Month</div><p>Pilot kickoff (if subscribed). First workflow live.</p></div>
+  </div>
+
+  <h3>Stay Connected</h3>
+  <ul>
+    <li>Questions: <a href="mailto:workshop@flowdaptor.com">workshop@flowdaptor.com</a></li>
+    <li>PSP AI Working Group: [TBD — suggest forming committee]</li>
+    <li>Vendor: FlowDaptor Pte Ltd (UEN: 202618046R)</li>
+  </ul>
+
+</section>
+
+<!-- ====================== APPENDIX ====================== -->
+<section class="tab-panel" id="appendix">
+  <div class="panel-header">
+    <div class="icon">+</div>
+    <div>
+      <h2>Appendix</h2>
+      <div class="speaker">Pricing · Resources · Contact</div>
+    </div>
+  </div>
+
+  <h3>Appendix A — Pricing</h3>
+  <table>
+    <thead><tr><th>Tier</th><th>Setup</th><th>Monthly</th><th>Includes</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Pilot</strong></td><td>SGD 300</td><td>SGD 100</td><td>1–2 workflows, 5 users, 90-day trial</td></tr>
+      <tr><td><strong>Standard</strong></td><td>SGD 2,000</td><td>SGD 500</td><td>5+ workflows, 20 users, integrations, support</td></tr>
+      <tr><td><strong>Enterprise</strong></td><td>Custom</td><td>Custom</td><td>On-premise, unlimited users, SLA, compliance audit</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><strong>PSP Pilot Discount:</strong> 40% off for first 90 days.</div>
+
+  <h3>Appendix B — Resources Provided</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">Physical</div>
+      <ul>
+        <li>1-pager: "AI Governance Checklist for PSP"</li>
+        <li>Case study details (print version)</li>
+        <li>QR code stickers for booking follow-up</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Digital</div>
+      <ul>
+        <li>Workshop slide deck (PDF)</li>
+        <li>Recording (if permitted)</li>
+        <li>OpenClaw setup guide</li>
+        <li>Sample workflow templates (events, comms, ops)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Follow-up</div>
+      <ul>
+        <li>Personalized email within 48 hours</li>
+        <li>Calendar invite for optional deep-dive session (1 hour, online)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>&copy; <span class="brand">FlowDaptor Pte Ltd</span></p>
+</footer>
+
+<script>
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      tabButtons.forEach(b => b.classList.toggle('active', b === btn));
+      tabPanels.forEach(p => p.classList.toggle('active', p.id === target));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (history.replaceState) history.replaceState(null, '', '#' + target);
+    });
+  });
+
+  // Open tab from hash on load
+  const initial = window.location.hash.replace('#', '');
+  if (initial) {
+    const btn = document.querySelector(`.tab-button[data-tab="${initial}"]`);
+    if (btn) btn.click();
+  }
+</script>
+
+</body>
+</html>
