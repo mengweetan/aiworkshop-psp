@@ -1,0 +1,2820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSP AI Workshop — From Generative to Agentic.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Shippori+Mincho:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   PSP × FLOWDAPTOR — Working Session
+   Clean / sleek / cosmic.
+   Palette anchored on the FlowDaptor brand mark.
+   ============================================================ */
+
+:root {
+  /* Background */
+  --void:        #04070d;      /* page */
+  --deep:        #070b15;      /* alternating bands */
+  --panel:       #0a0f1c;      /* surface */
+  --hairline:    rgba(255, 255, 255, 0.08);
+  --hairline-2:  rgba(255, 255, 255, 0.14);
+
+  /* Foreground */
+  --paper:       #ffffff;
+  --ice:         #e6edf6;
+  --slate:       #7e93ad;
+  --slate-2:     #a4b6cf;
+
+  /* Brand — from FlowDaptor mark */
+  --cyan:        #22d3ee;
+  --cyan-soft:   #67e8f9;
+  --mint:        #5eead4;
+  --grad:        linear-gradient(135deg, #5eead4 0%, #22d3ee 100%);
+  --grad-soft:   linear-gradient(135deg, rgba(94, 234, 212, 0.16), rgba(34, 211, 238, 0.10));
+  --grad-line:   linear-gradient(90deg, transparent 0%, #5eead4 50%, transparent 100%);
+
+  /* Type */
+  --sans: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --serif: "Instrument Serif", "Times New Roman", serif;
+  --zen:   "Shippori Mincho", "Instrument Serif", serif;
+
+  /* Layout */
+  --container: 1280px;
+  --gutter: 48px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+html, body {
+  background: var(--void);
+  color: var(--ice);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body {
+  font-size: 15.5px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  background:
+    radial-gradient(ellipse 70% 50% at 80% -5%, rgba(34, 211, 238, 0.10), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 30%, rgba(94, 234, 212, 0.08), transparent 70%),
+    var(--void);
+  background-attachment: fixed;
+}
+
+img { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+.wrap {
+  width: min(var(--container), calc(100% - var(--gutter)));
+  margin-inline: auto;
+}
+
+/* ============================================================
+   Type primitives
+   ============================================================ */
+.label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--slate);
+  font-weight: 500;
+}
+.label .accent { color: var(--cyan); }
+.label.cyan { color: var(--cyan); }
+
+h1, h2, h3, h4 {
+  font-family: var(--sans);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  color: var(--paper);
+}
+
+.display {
+  font-size: clamp(60px, 9.5vw, 152px);
+  line-height: 0.86;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+
+.italic {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.lead {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--slate-2);
+  font-weight: 400;
+  max-width: 50ch;
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(4, 7, 13, 0.78);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-bottom: 1px solid var(--hairline);
+}
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+  gap: 24px;
+}
+.logo-lockup {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.logo-lockup .vendor {
+  height: 26px;
+  display: block;
+  mix-blend-mode: screen;
+  opacity: 0.98;
+}
+.logo-lockup .x {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--slate);
+}
+.logo-lockup .psp {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.logo-lockup .psp img { width: 80%; height: 80%; object-fit: contain; }
+
+.nav {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.nav a {
+  color: var(--slate-2);
+  transition: color 200ms var(--ease);
+}
+.nav a:hover { color: var(--paper); }
+.nav .btn-board {
+  padding: 10px 20px;
+  background: var(--grad);
+  color: var(--void);
+  font-weight: 600;
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+  border-radius: 2px;
+}
+.nav .btn-board:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(34, 211, 238, 0.32);
+  color: var(--void);
+}
+@media (max-width: 960px) {
+  .nav .nav-link { display: none; }
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  padding: 80px 0 100px;
+  min-height: calc(100vh - 68px);
+  display: flex;
+  align-items: center;
+}
+.hero .wrap {
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr;
+  gap: 64px;
+  align-items: center;
+  width: 100%;
+}
+@media (max-width: 1024px) {
+  .hero .wrap { grid-template-columns: 1fr; gap: 56px; }
+  .hero { padding: 48px 0 72px; }
+}
+
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 64px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.hero-top .right {
+  display: flex; gap: 22px; align-items: center;
+}
+.hero-top .right .dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--cyan);
+}
+
+.hero h1 .small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 28px;
+}
+
+.hero-sub {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 56px;
+  align-items: start;
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 1px solid var(--hairline);
+}
+@media (max-width: 720px) {
+  .hero-sub { grid-template-columns: 1fr; gap: 24px; }
+}
+.hero-sub .objective .k {
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+.hero-sub .objective .v {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--slate);
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+  max-width: 28ch;
+}
+
+.cta-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 17px 30px;
+  border: 1px solid transparent;
+  transition: all 250ms var(--ease);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 2px;
+}
+.btn-primary {
+  background: var(--grad);
+  color: var(--void);
+  position: relative;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(34, 211, 238, 0.34);
+}
+.btn-ghost {
+  color: var(--ice);
+  border-color: var(--hairline-2);
+  background: transparent;
+}
+.btn-ghost:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.btn .arrow { font-family: var(--mono); font-weight: 400; }
+
+/* Hero specimen card — clean exhibit */
+.specimen {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.specimen::before {
+  /* faint gradient hairline at top */
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: var(--grad);
+  opacity: 0.7;
+}
+.specimen .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.specimen .head .id {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+.specimen .head .status {
+  color: var(--slate);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.specimen .head .status::before {
+  content: "";
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
+}
+.specimen .img {
+  aspect-ratio: 3 / 4.4;
+  overflow: hidden;
+  position: relative;
+}
+.specimen .img img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(1.05);
+}
+.specimen .img::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(4, 7, 13, 0.85) 100%);
+  pointer-events: none;
+}
+.specimen .legend {
+  padding: 18px 20px;
+  border-top: 1px solid var(--hairline);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.specimen .legend .k { color: var(--slate); margin-bottom: 4px; }
+.specimen .legend .v { color: var(--ice); }
+
+/* ============================================================
+   Vitals
+   ============================================================ */
+.vitals {
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  background: var(--deep);
+}
+.vitals .wrap {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+@media (max-width: 880px) { .vitals .wrap { grid-template-columns: repeat(2, 1fr); } }
+.vital {
+  padding: 28px 22px;
+  border-left: 1px solid var(--hairline);
+}
+.vital:first-child { border-left: none; }
+@media (max-width: 880px) {
+  .vital { border-left: none; border-top: 1px solid var(--hairline); }
+  .vital:nth-child(2n) { border-left: 1px solid var(--hairline); }
+}
+.vital .k {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 10px;
+}
+.vital .v {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--paper);
+  letter-spacing: -0.005em;
+}
+.vital .v .a {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ============================================================
+   Sections
+   ============================================================ */
+section.band {
+  padding: 140px 0 120px;
+  position: relative;
+}
+@media (max-width: 880px) {
+  section.band { padding: 96px 0 80px; }
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: 1fr 1.8fr;
+  gap: 64px;
+  align-items: end;
+  margin-bottom: 80px;
+}
+@media (max-width: 880px) {
+  .section-head { grid-template-columns: 1fr; gap: 24px; margin-bottom: 48px; }
+}
+.section-head .num {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: var(--cyan);
+  position: relative;
+  padding-top: 24px;
+}
+.section-head .num::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 56px; height: 1px;
+  background: var(--grad);
+}
+.section-head h2 {
+  font-size: clamp(40px, 5.8vw, 88px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 20px;
+  max-width: 17ch;
+}
+.section-head .kicker {
+  font-size: 17.5px;
+  color: var(--slate-2);
+  max-width: 58ch;
+  line-height: 1.55;
+}
+
+/* ============================================================
+   01 — FLIGHT PLAN
+   ============================================================ */
+.flight-plan {
+  border: 1px solid var(--hairline);
+  background: var(--deep);
+  border-radius: 4px;
+}
+.flight-plan .row {
+  display: grid;
+  grid-template-columns: 64px 84px 1fr 1.1fr 90px;
+  gap: 28px;
+  padding: 24px 32px;
+  border-top: 1px solid var(--hairline);
+  align-items: center;
+  transition: background 180ms var(--ease);
+}
+.flight-plan .row:first-child { border-top: none; }
+.flight-plan .row:hover:not(.head) {
+  background: rgba(34, 211, 238, 0.025);
+}
+.flight-plan .row.head {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--slate);
+  padding: 18px 32px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.flight-plan .row .seg {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.flight-plan .row .tminus {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--slate-2);
+  letter-spacing: 0.04em;
+}
+.flight-plan .row .topic {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 19px;
+  color: var(--paper);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+.flight-plan .row .topic .desc {
+  display: block;
+  font-weight: 400;
+  font-size: 14.5px;
+  color: var(--slate-2);
+  margin-top: 6px;
+  letter-spacing: -0.005em;
+  line-height: 1.5;
+}
+.flight-plan .row .crew {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ice);
+  letter-spacing: 0.04em;
+}
+.flight-plan .row .crew .role {
+  display: block;
+  color: var(--slate);
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.flight-plan .row .dur {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: right;
+  font-weight: 600;
+}
+@media (max-width: 880px) {
+  .flight-plan .row { grid-template-columns: 48px 1fr 80px; gap: 14px; padding: 20px; }
+  .flight-plan .row .tminus, .flight-plan .row .crew { display: none; }
+  .flight-plan .row.head { display: none; }
+}
+.flight-plan-foot {
+  padding: 22px 32px;
+  border-top: 1px solid var(--hairline-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  color: var(--slate);
+}
+.flight-plan-foot .total {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+/* ============================================================
+   TRANSMISSION — full-bleed video
+   ============================================================ */
+.transmission {
+  margin-top: 56px;
+  position: relative;
+  overflow: hidden;
+}
+.transmission .frame {
+  position: relative;
+  aspect-ratio: 21 / 9;
+  overflow: hidden;
+  background: var(--void);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.transmission video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.transmission .frame::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(4, 7, 13, 0.5) 0%, transparent 35%, transparent 60%, rgba(4, 7, 13, 0.92) 100%),
+    linear-gradient(90deg, rgba(4, 7, 13, 0.7) 0%, transparent 55%);
+  pointer-events: none;
+}
+.transmission .overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 56px clamp(28px, 5vw, 80px);
+  z-index: 2;
+}
+.transmission .top-bar {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.transmission .big {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(38px, 6.5vw, 96px);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--paper);
+  max-width: 18ch;
+}
+.transmission .big em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+.transmission .caption {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--slate-2);
+  letter-spacing: 0.1em;
+  max-width: 36ch;
+  line-height: 1.6;
+}
+@media (max-width: 720px) {
+  .transmission .frame { aspect-ratio: 4 / 5; }
+  .transmission .overlay { padding: 28px; }
+}
+
+/* ============================================================
+   ZEN INTERLUDE — Fuji at dusk
+   ============================================================ */
+.zen {
+  position: relative;
+  min-height: 92vh;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  isolation: isolate;
+}
+.zen .bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    url('assets/FUJI.jpg') center 35% / cover no-repeat,
+    var(--void);
+  filter: brightness(0.78) saturate(1.15);
+}
+.zen::before {
+  /* vignette + cyan kiss */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 35%, transparent 0%, rgba(4, 7, 13, 0.45) 60%, rgba(4, 7, 13, 0.92) 100%),
+    linear-gradient(180deg, rgba(4, 7, 13, 0.45) 0%, transparent 30%, transparent 60%, rgba(4, 7, 13, 0.92) 100%);
+  pointer-events: none;
+}
+.zen::after {
+  /* very faint cyan horizon glow */
+  content: "";
+  position: absolute;
+  bottom: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%; height: 200px;
+  background: radial-gradient(ellipse 60% 100% at 50% 100%, rgba(34, 211, 238, 0.12), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+.zen .stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 56px;
+  padding: 140px 24px;
+}
+.zen .mark {
+  font-family: var(--zen);
+  font-size: 64px;
+  color: var(--paper);
+  letter-spacing: 0.4em;
+  font-weight: 400;
+  line-height: 1;
+  text-shadow: 0 0 60px rgba(34, 211, 238, 0.35);
+}
+.zen .mark .small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-top: 24px;
+  text-shadow: none;
+}
+.zen .haiku {
+  font-family: var(--zen);
+  font-size: clamp(26px, 3.4vw, 42px);
+  line-height: 1.6;
+  font-weight: 400;
+  color: var(--paper);
+  max-width: 28ch;
+  margin-inline: auto;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
+}
+.zen .haiku .line { display: block; }
+.zen .haiku em {
+  font-style: italic;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.zen .attribution {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--slate-2);
+}
+.zen .credit {
+  position: absolute;
+  bottom: 22px;
+  right: 28px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================================
+   02 — THE SHIFT
+   ============================================================ */
+.shift-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 56px;
+}
+@media (max-width: 880px) { .shift-grid { grid-template-columns: 1fr; } }
+.shift-card {
+  padding: 48px 40px;
+  position: relative;
+}
+.shift-card.before { background: var(--deep); }
+.shift-card.after {
+  background: linear-gradient(135deg, rgba(94, 234, 212, 0.06), rgba(34, 211, 238, 0.04));
+  border-left: 1px solid var(--hairline);
+}
+@media (max-width: 880px) {
+  .shift-card.after { border-left: none; border-top: 1px solid var(--hairline); }
+}
+.shift-card .marker {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.shift-card.after .marker { color: var(--cyan); }
+.shift-card .marker .line {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.35;
+}
+.shift-card h3 {
+  font-size: 46px;
+  margin-bottom: 32px;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+}
+.shift-card.after h3 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.shift-card ul { list-style: none; }
+.shift-card li {
+  padding: 14px 0;
+  border-top: 1px solid var(--hairline);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--slate-2);
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 8px;
+}
+.shift-card.after li { color: var(--ice); }
+.shift-card li::before {
+  content: attr(data-i);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--slate);
+  padding-top: 4px;
+  letter-spacing: 0.1em;
+}
+.shift-card.after li::before { color: var(--cyan); }
+
+/* Pillars */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  overflow: hidden;
+}
+@media (max-width: 880px) { .pillars { grid-template-columns: 1fr; } }
+.pillar {
+  padding: 40px 32px;
+  border-left: 1px solid var(--hairline);
+  transition: background 250ms var(--ease);
+  background: var(--deep);
+}
+.pillar:first-child { border-left: none; }
+@media (max-width: 880px) {
+  .pillar { border-left: none; border-top: 1px solid var(--hairline); }
+  .pillar:first-child { border-top: none; }
+}
+.pillar:hover { background: rgba(34, 211, 238, 0.04); }
+.pillar .num {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.2em;
+  margin-bottom: 22px;
+  font-weight: 600;
+}
+.pillar h4 {
+  font-size: 26px;
+  margin-bottom: 16px;
+  letter-spacing: -0.025em;
+  line-height: 1.0;
+}
+.pillar p {
+  font-size: 14.5px;
+  color: var(--slate-2);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   FUNNY PANEL
+   ============================================================ */
+.funny {
+  padding: 100px 0;
+  border-top: 1px solid var(--hairline);
+}
+.funny .wrap {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 64px;
+  align-items: center;
+}
+@media (max-width: 880px) { .funny .wrap { grid-template-columns: 1fr; gap: 32px; } }
+.funny .portrait {
+  position: relative;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.funny .portrait::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: var(--grad);
+  opacity: 0.7;
+  z-index: 2;
+}
+.funny .portrait img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+.funny .portrait .bubble {
+  position: absolute;
+  bottom: 22px; left: 22px; right: 22px;
+  background: rgba(4, 7, 13, 0.86);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--hairline-2);
+  padding: 14px 18px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ice);
+  line-height: 1.5;
+}
+.funny .portrait .bubble .who {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 6px;
+}
+.funny .text h3 {
+  font-size: clamp(38px, 4.6vw, 64px);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  margin-bottom: 28px;
+}
+.funny .text h3 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.funny .text .lead { margin-bottom: 22px; }
+.funny .text .lol {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 20px;
+}
+.funny .text ul {
+  list-style: none;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--slate-2);
+}
+.funny .text li {
+  padding: 8px 0;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  gap: 16px;
+}
+.funny .text li::before {
+  content: "·";
+  color: var(--cyan);
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ============================================================
+   03 — OPS LOGS
+   ============================================================ */
+.cases { border-top: 1px solid var(--hairline-2); }
+.case {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 80px;
+  padding: 80px 0;
+  border-bottom: 1px solid var(--hairline);
+  position: relative;
+}
+@media (max-width: 880px) {
+  .case { grid-template-columns: 1fr; gap: 32px; padding: 56px 0; }
+}
+.case .meta { position: sticky; top: 96px; align-self: start; }
+.case .meta .log-id {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.case .meta .class {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--slate);
+  padding: 5px 12px;
+  border: 1px solid var(--hairline-2);
+  display: inline-block;
+  margin-bottom: 36px;
+  border-radius: 2px;
+}
+.case .meta h3 {
+  font-size: 48px;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin-bottom: 18px;
+}
+.case .meta h3 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.case .meta .client {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--slate-2);
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.case .meta .speaker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--slate);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.case .body .problem {
+  font-size: 17px;
+  color: var(--slate-2);
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 56ch;
+}
+.results {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.res {
+  padding: 30px 28px;
+  border-left: 1px solid var(--hairline);
+  border-top: 1px solid var(--hairline);
+  background: var(--deep);
+}
+.res:nth-child(-n + 2) { border-top: none; }
+.res:nth-child(2n + 1) { border-left: none; }
+.res .k {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 16px;
+}
+.res .v {
+  font-family: var(--mono);
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--paper);
+  letter-spacing: -0.015em;
+  line-height: 1;
+  font-feature-settings: "tnum", "zero";
+}
+.res .v .from { color: var(--slate-2); }
+.res .v .arrow {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 0 6px;
+  font-weight: 400;
+}
+.res .v .to {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.res .sub {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--slate);
+  margin-top: 12px;
+  letter-spacing: -0.005em;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   PULL QUOTE
+   ============================================================ */
+.pull {
+  padding: 160px 0;
+  text-align: center;
+  position: relative;
+  background:
+    radial-gradient(ellipse 50% 80% at 50% 50%, rgba(34, 211, 238, 0.08), transparent 70%),
+    var(--void);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.pull blockquote {
+  font-family: var(--serif);
+  font-size: clamp(36px, 5.5vw, 78px);
+  font-style: italic;
+  line-height: 1.05;
+  font-weight: 400;
+  color: var(--paper);
+  letter-spacing: -0.02em;
+  max-width: 22ch;
+  margin: 0 auto;
+}
+.pull blockquote .hi {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.pull .by {
+  margin-top: 40px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+/* ============================================================
+   FUTURE SECTION — Why you, why now
+   ============================================================ */
+.future {
+  padding: 140px 0;
+  position: relative;
+  overflow: hidden;
+}
+.future .wrap {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 80px;
+  align-items: center;
+}
+@media (max-width: 1000px) { .future .wrap { grid-template-columns: 1fr; gap: 56px; } }
+.future .text .label { color: var(--cyan); margin-bottom: 22px; }
+.future .text h2 {
+  font-size: clamp(44px, 6.2vw, 96px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 28px;
+}
+.future .text h2 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.future .text .lead { margin-bottom: 36px; font-size: 18px; }
+.future .points {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 36px;
+}
+.future .point {
+  padding: 20px 22px;
+  border: 1px solid var(--hairline);
+  background: var(--deep);
+  border-radius: 4px;
+}
+.future .point .n {
+  font-family: var(--mono);
+  font-size: 22px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.future .point .p {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--slate-2);
+  line-height: 1.55;
+}
+.future .photo {
+  position: relative;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.future .photo::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: var(--grad); opacity: 0.7; z-index: 2;
+}
+.future .photo img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.future .photo .cap {
+  padding: 16px 20px;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--slate);
+  display: flex;
+  justify-content: space-between;
+  background: var(--deep);
+}
+.future .photo .cap .a {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+/* News clipping — sits beneath the training photo */
+.future .right-col {
+  display: flex; flex-direction: column; gap: 24px;
+}
+.news-clip {
+  position: relative;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #ffffff;
+}
+.news-clip .news-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: var(--deep);
+  color: var(--cyan);
+  border-bottom: 1px solid var(--hairline);
+  font-weight: 600;
+}
+.news-clip .news-head .src {
+  color: var(--slate-2);
+  font-weight: 400;
+}
+.news-clip .news-head::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: var(--grad);
+}
+.news-clip img {
+  width: 100%;
+  display: block;
+  background: #fff;
+}
+.news-clip .news-foot {
+  padding: 16px 20px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ice);
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  background: var(--deep);
+  border-top: 1px solid var(--hairline);
+}
+.news-clip .news-foot strong {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+/* ============================================================
+   04 — SIMULATION
+   ============================================================ */
+.sim-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 56px;
+}
+@media (max-width: 880px) { .sim-grid { grid-template-columns: 1fr; gap: 32px; } }
+.steps {
+  list-style: none;
+  border-top: 1px solid var(--hairline-2);
+}
+.steps li {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--hairline);
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 24px;
+}
+.steps .seq {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.2em;
+  padding-top: 6px;
+  font-weight: 600;
+}
+.steps .step-title {
+  font-family: var(--sans);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--paper);
+  letter-spacing: -0.025em;
+  margin-bottom: 10px;
+  line-height: 1.05;
+}
+.steps .step-body {
+  font-size: 15px;
+  color: var(--slate-2);
+  line-height: 1.55;
+  max-width: 52ch;
+}
+.sim-side {
+  background: var(--deep);
+  border: 1px solid var(--hairline);
+  padding: 36px 32px;
+  align-self: start;
+  position: sticky; top: 96px;
+  border-radius: 4px;
+}
+.sim-side .label { color: var(--cyan); margin-bottom: 14px; }
+.sim-side h4 {
+  font-size: 26px;
+  margin-bottom: 24px;
+  letter-spacing: -0.025em;
+  line-height: 1.0;
+}
+.sim-side ul { list-style: none; }
+.sim-side li {
+  padding: 14px 0;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--slate-2);
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  gap: 14px;
+  line-height: 1.5;
+}
+.sim-side li:first-child { border-top: none; }
+.sim-side .domain {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  padding-top: 2px;
+}
+
+/* ============================================================
+   QUEST BANNER — inside Simulation section
+   ============================================================ */
+.quest-banner {
+  position: relative;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 64px;
+  background: var(--panel);
+  aspect-ratio: 21 / 9;
+}
+.quest-banner::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--grad); z-index: 3;
+}
+.quest-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  filter: saturate(1.05);
+}
+.quest-banner::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(4, 7, 13, 0.88) 0%, rgba(4, 7, 13, 0.45) 40%, transparent 70%),
+    linear-gradient(180deg, transparent 50%, rgba(4, 7, 13, 0.7) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+.quest-banner .overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 56px clamp(28px, 4vw, 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.quest-banner .overlay .top {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.quest-banner .overlay .quest-title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(36px, 4.4vw, 64px);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--paper);
+  max-width: 18ch;
+}
+.quest-banner .overlay .quest-title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.quest-banner .overlay .bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.quest-banner .overlay .roll {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ice);
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+  max-width: 32ch;
+}
+.quest-banner .overlay .roll strong {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 11px;
+  display: block;
+  margin-bottom: 6px;
+}
+.quest-banner .overlay .stats {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  text-align: right;
+  line-height: 1.8;
+}
+@media (max-width: 720px) {
+  .quest-banner { aspect-ratio: 4 / 5; }
+  .quest-banner .overlay { padding: 28px; }
+}
+
+/* ============================================================
+   GAME / ATTITUDE
+   ============================================================ */
+.game {
+  padding: 140px 0;
+  position: relative;
+  border-top: 1px solid var(--hairline);
+  background: var(--deep);
+}
+.game .wrap {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 80px;
+  align-items: center;
+}
+@media (max-width: 1000px) { .game .wrap { grid-template-columns: 1fr; gap: 48px; } }
+.game .art {
+  position: relative;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.game .art img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+.game .art .corner {
+  position: absolute;
+  top: 16px; left: 16px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ice);
+  background: rgba(4, 7, 13, 0.8);
+  padding: 5px 10px;
+  border: 1px solid var(--hairline-2);
+  z-index: 2;
+}
+.game .text .label { color: var(--cyan); margin-bottom: 22px; }
+.game .text h2 {
+  font-size: clamp(44px, 6.2vw, 92px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 28px;
+}
+.game .text h2 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.game .text .lead { margin-bottom: 36px; font-size: 18px; }
+.game .text .stance {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 14px;
+  padding: 16px 0;
+  border-top: 1px solid var(--hairline);
+  font-size: 15px;
+  color: var(--ice);
+  line-height: 1.55;
+}
+.game .text .stance:first-of-type { border-top: 1px solid var(--hairline-2); }
+.game .text .stance .k {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 0.1em;
+  padding-top: 4px;
+}
+.game .text .stance strong {
+  font-weight: 600;
+  color: var(--paper);
+}
+
+/* ============================================================
+   05 — DEPLOYMENT
+   ============================================================ */
+.deploy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+@media (max-width: 880px) { .deploy-grid { grid-template-columns: 1fr; gap: 40px; } }
+.deploy-card {
+  border: 1px solid var(--hairline);
+  background: var(--deep);
+  padding: 48px 40px;
+  position: relative;
+  border-radius: 4px;
+}
+.deploy-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: var(--grad);
+  opacity: 0.7;
+}
+.deploy-card .badge {
+  position: absolute;
+  top: -1px; right: 32px;
+  background: var(--grad);
+  color: var(--void);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 7px 14px;
+}
+.deploy-card h4 {
+  font-size: 13px;
+  font-family: var(--mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-top: 24px;
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+.tier {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  padding: 22px 0;
+  border-top: 1px solid var(--hairline);
+  align-items: center;
+}
+.tier:first-of-type { border-top: 1px solid var(--hairline-2); }
+.tier .name {
+  font-family: var(--sans);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--paper);
+  letter-spacing: -0.015em;
+}
+.tier .name .sub {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--slate-2);
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.tier .price {
+  font-family: var(--mono);
+  font-size: 19px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: right;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.tier .price .u {
+  display: block;
+  font-size: 10.5px;
+  background: none;
+  -webkit-text-fill-color: var(--slate);
+  color: var(--slate);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+.deploy-card .foot {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--slate-2);
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--hairline);
+  padding: 100px 0 40px;
+  background: var(--deep);
+  position: relative;
+}
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: var(--grad-line);
+}
+.site-footer .wrap {
+  display: grid;
+  grid-template-columns: 1.6fr 0.7fr 0.7fr 1fr;
+  gap: 48px;
+}
+@media (max-width: 880px) { .site-footer .wrap { grid-template-columns: 1fr 1fr; gap: 32px; } }
+.colophon {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 30px;
+  color: var(--paper);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin-bottom: 22px;
+  max-width: 16ch;
+}
+.colophon em {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.site-footer .vendor-mark {
+  margin-bottom: 20px;
+  height: 32px;
+  mix-blend-mode: screen;
+  opacity: 0.95;
+}
+.site-footer .copy {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--slate-2);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+}
+.site-footer h5 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+.site-footer ul { list-style: none; }
+.site-footer li { padding: 4px 0; }
+.site-footer a {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ice);
+  letter-spacing: 0.04em;
+  transition: color 200ms var(--ease);
+}
+.site-footer a:hover { color: var(--cyan); }
+.footer-bar {
+  margin-top: 64px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+@media (max-width: 600px) {
+  .footer-bar { flex-direction: column; gap: 10px; }
+}
+
+/* ============================================================
+   BACKSTAGE — password-gated slide viewer
+   ============================================================ */
+.backstage {
+  padding: 140px 0;
+  border-top: 1px solid var(--hairline);
+  background: var(--deep);
+  position: relative;
+}
+.backstage .frame {
+  border: 1px solid var(--hairline);
+  background: var(--void);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.backstage .frame::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: var(--grad); opacity: 0.7; z-index: 2;
+}
+.backstage .frame-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.backstage .frame-head .id {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+.backstage .frame-head .lock {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--slate);
+}
+.backstage .frame-head .lock::before {
+  content: "";
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #ff5a5f;
+  box-shadow: 0 0 8px #ff5a5f;
+  transition: all 250ms var(--ease);
+}
+.backstage[data-unlocked="true"] .frame-head .lock::before {
+  background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
+}
+.backstage[data-unlocked="true"] .frame-head .lock-label::before {
+  content: "Unlocked \00b7 ";
+}
+.backstage[data-unlocked="false"] .frame-head .lock-label::before {
+  content: "Locked \00b7 ";
+}
+.backstage .lock-pane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 96px 32px;
+  text-align: center;
+  min-height: 480px;
+}
+.backstage[data-unlocked="true"] .lock-pane { display: none; }
+.backstage .lock-pane .icon {
+  width: 64px; height: 64px;
+  border: 1px solid var(--hairline-2);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(34, 211, 238, 0.04);
+}
+.backstage .lock-pane .icon svg { width: 24px; height: 24px; }
+.backstage .lock-pane h3 {
+  font-size: 32px;
+  letter-spacing: -0.03em;
+  max-width: 20ch;
+  line-height: 1.05;
+}
+.backstage .lock-pane .desc {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--slate-2);
+  letter-spacing: 0.06em;
+  max-width: 42ch;
+  line-height: 1.6;
+}
+.backstage .pwd-form {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  max-width: 380px;
+  border: 1px solid var(--hairline-2);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--void);
+  transition: border-color 200ms var(--ease);
+}
+.backstage .pwd-form:focus-within { border-color: var(--cyan); }
+.backstage .pwd-form input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 16px 18px;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+}
+.backstage .pwd-form input::placeholder {
+  color: var(--slate);
+  letter-spacing: 0.18em;
+}
+.backstage .pwd-form button {
+  background: var(--grad);
+  color: var(--void);
+  border: none;
+  padding: 0 22px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 200ms var(--ease);
+}
+.backstage .pwd-form button:hover { filter: brightness(1.1); }
+.backstage .pwd-err {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ff5a5f;
+  min-height: 14px;
+  opacity: 0;
+  transition: opacity 200ms var(--ease);
+}
+.backstage .pwd-err.show { opacity: 1; }
+.backstage .pwd-hint {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+.backstage .deck-pane {
+  display: none;
+  position: relative;
+}
+.backstage[data-unlocked="true"] .deck-pane { display: block; }
+.backstage .deck-pane .embed {
+  aspect-ratio: 16 / 9.5;
+  background: var(--paper);
+  position: relative;
+}
+.backstage .deck-pane .embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.backstage .deck-pane .embed .placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+.backstage .deck-pane .embed .placeholder .label { color: var(--cyan); }
+.backstage .deck-pane .embed .placeholder code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--mint);
+  background: rgba(34, 211, 238, 0.08);
+  padding: 8px 14px;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--hairline-2);
+  border-radius: 4px;
+  display: inline-block;
+}
+.backstage .deck-pane .embed .placeholder p {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--slate-2);
+  line-height: 1.7;
+  max-width: 48ch;
+}
+.backstage .deck-pane .tools {
+  padding: 14px 22px;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--slate);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.backstage .deck-pane .tools a {
+  color: var(--cyan);
+  cursor: pointer;
+  transition: color 200ms var(--ease);
+}
+.backstage .deck-pane .tools a:hover { color: var(--mint); }
+.backstage .deck-pane .tools .lock-btn {
+  background: none;
+  border: 1px solid var(--hairline-2);
+  color: var(--slate-2);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 200ms var(--ease);
+}
+.backstage .deck-pane .tools .lock-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+
+::selection { background: var(--cyan); color: var(--void); }
+.anchor { position: relative; top: -80px; visibility: hidden; pointer-events: none; display: block; }
+
+</style>
+</head>
+<body>
+
+<!-- ============== HEADER ============== -->
+<header class="site-header">
+  <div class="wrap">
+    <div class="logo-lockup">
+      <img class="vendor" src="assets/vendor.png" alt="FlowDaptor" />
+      <span class="x">FOR</span>
+      <div class="psp"><img src="assets/psp-logo.jpg" alt="PSP" /></div>
+    </div>
+    <nav class="nav">
+      <a class="nav-link" href="#plan">Flight plan</a>
+      <a class="nav-link" href="#shift">The shift</a>
+      <a class="nav-link" href="#logs">Ops logs</a>
+      <a class="nav-link" href="#future">Why you</a>
+      <a class="nav-link" href="#sim">Simulation</a>
+      <a class="nav-link" href="#backstage">Backstage</a>
+      <a class="btn-board" href="#deploy">Board the ship</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="hero-top">
+        <span class="label">PSP × FlowDaptor <span class="accent">·</span> Working Session</span>
+        <div class="right">
+          <span class="label">27.06.2026</span>
+          <span class="dot"></span>
+          <span class="label">Sat · 14:00 SGT</span>
+        </div>
+      </div>
+
+      <h1 class="display">
+        <span class="small">A three-hour transmission</span>
+        From generative<br/>
+        to <span class="italic">agentic.</span>
+      </h1>
+
+      <div class="hero-sub">
+        <div class="objective">
+          <div class="label k">// Objective</div>
+          <div class="v">Brief crew on AI agents · governance · deployment · live tooling. Send them home with a working one.</div>
+        </div>
+        <p class="lead">AI that doesn't just answer — AI that <em style="color: var(--cyan); font-style: normal;">acts.</em> A three-hour working session for PSP staff and volunteers on building, governing, and trusting AI agents inside a real organisation.</p>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#deploy">Reserve a seat <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="#plan">Read the dossier <span class="arrow">↓</span></a>
+      </div>
+    </div>
+
+    <div>
+      <div class="specimen">
+        <div class="head">
+          <span class="id">Specimen · 01 / OpenClaw</span>
+          <span class="status">Signal OK</span>
+        </div>
+        <div class="img">
+          <img src="assets/DOG.jpeg" alt="Astronaut shiba inu, station corridor" />
+        </div>
+        <div class="legend">
+          <div class="row"><div class="k">Class</div><div class="v">Agentic / IV</div></div>
+          <div class="row"><div class="k">Origin</div><div class="v">SG · 2026</div></div>
+          <div class="row"><div class="k">Frame</div><div class="v">OpenClaw Δ</div></div>
+          <div class="row"><div class="k">Capacity</div><div class="v">30 seats</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== VITALS ============== -->
+<section class="vitals">
+  <div class="wrap">
+    <div class="vital">
+      <div class="k">// Coordinates</div>
+      <div class="v">PSP HQ <span class="a">·</span> SG</div>
+    </div>
+    <div class="vital">
+      <div class="k">// Window</div>
+      <div class="v">14:00 — 17:00 <span class="a">SGT</span></div>
+    </div>
+    <div class="vital">
+      <div class="k">// Duration</div>
+      <div class="v">195 <span class="a">min</span></div>
+    </div>
+    <div class="vital">
+      <div class="k">// Crew</div>
+      <div class="v">7 <span class="a">facilitators</span></div>
+    </div>
+    <div class="vital">
+      <div class="k">// Capacity</div>
+      <div class="v">30 <span class="a">seats</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 01 — FLIGHT PLAN ============== -->
+<span id="plan" class="anchor"></span>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">01 / Flight plan</div>
+      <div>
+        <h2>Seven segments,<br/><span class="italic">one trajectory.</span></h2>
+        <p class="kicker">Definition → governance → architecture → live deployments → your own keyboard. Each segment has a lead facilitator. If a topic doesn't land, that's the moment to ask.</p>
+      </div>
+    </div>
+
+    <div class="flight-plan">
+      <div class="row head">
+        <div>Seg.</div><div>T-Minus</div><div>Objective</div><div>Crew</div><div>Duration</div>
+      </div>
+
+      <div class="row">
+        <div class="seg">i.</div>
+        <div class="tminus">T+00:00</div>
+        <div class="topic">AI introduction &amp; governance<span class="desc">What AI is, what it isn't, and the five things to settle before you let it touch your data.</span></div>
+        <div class="crew">Harish<span class="role">Lead</span></div>
+        <div class="dur">20 min</div>
+      </div>
+      <div class="row">
+        <div class="seg">ii.</div>
+        <div class="tminus">T+00:20</div>
+        <div class="topic">Overview of AI agents<span class="desc">From chatbots to agents — memory, tools, action.</span></div>
+        <div class="crew">CS Chong<span class="role">Lead</span></div>
+        <div class="dur">15 min</div>
+      </div>
+      <div class="row">
+        <div class="seg">iii.</div>
+        <div class="tminus">T+00:35</div>
+        <div class="topic">Risk &amp; deployment model<span class="desc">Risk matrix · SaaS · on-prem · hybrid · PSP data zones.</span></div>
+        <div class="crew">MengWee<span class="role">Lead</span></div>
+        <div class="dur">15 min</div>
+      </div>
+      <div class="row">
+        <div class="seg">iv.</div>
+        <div class="tminus">T+00:50</div>
+        <div class="topic">Possible applications &amp; deep dive<span class="desc">Five scenarios an agent could handle. Architecture, end-to-end.</span></div>
+        <div class="crew">MengWee<span class="role">Lead</span></div>
+        <div class="dur">30 min</div>
+      </div>
+      <div class="row">
+        <div class="seg">v.</div>
+        <div class="tminus">T+01:20</div>
+        <div class="topic">Field notes — three case studies<span class="desc">Real estate broker · event registration · email marketing AI. Numbers, not slogans.</span></div>
+        <div class="crew">MengWee · Zheng Xun · Teddy<span class="role">Practitioners</span></div>
+        <div class="dur">45 min</div>
+      </div>
+      <div class="row">
+        <div class="seg">vi.</div>
+        <div class="tminus">T+02:05</div>
+        <div class="topic">Hands-on &amp; group presentations<span class="desc">Three groups · one workflow each · live tools · five-minute report back.</span></div>
+        <div class="crew">CS · MengWee · Anthony · Harish<span class="role">Facilitators</span></div>
+        <div class="dur">60 min</div>
+      </div>
+      <div class="row">
+        <div class="seg">vii.</div>
+        <div class="tminus">T+03:05</div>
+        <div class="topic">Conclusion &amp; next steps<span class="desc">Pilot programme, follow-ups, what we'd commit to before October.</span></div>
+        <div class="crew">Sec Gen<span class="role">Closing</span></div>
+        <div class="dur">10 min</div>
+      </div>
+
+      <div class="flight-plan-foot">
+        <span>// Doors 13:45 · Light snacks throughout</span>
+        <span class="total">∑ 195 min · 3h 15m</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSMISSION video band -->
+  <div class="transmission">
+    <div class="frame">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/hero.mp4" type="video/mp4" />
+      </video>
+      <div class="overlay">
+        <div class="top-bar">// Live transmission · Feed 0427 · Ch.12 · SGT</div>
+        <div></div>
+        <div>
+          <div class="big">The agent is <em>already moving.</em></div>
+          <p class="caption" style="margin-top: 22px;">Recovered footage from a 12-week deployment. We bring the raw feed, not the highlight reel.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== ZEN INTERLUDE — Fuji at dusk ============== -->
+<section class="zen">
+  <div class="bg" aria-hidden="true"></div>
+  <div class="stage">
+    <div class="mark">
+      静
+      <span class="small">Interval · Stillness</span>
+    </div>
+
+    <div class="haiku">
+      <span class="line">Move slowly.</span>
+      <span class="line">Teach it where the lines are.</span>
+      <span class="line">Then <em>trust it to move.</em></span>
+    </div>
+
+    <div class="attribution">— Field note · before deployment</div>
+  </div>
+  <span class="credit">Mt. Fuji from Izu · dusk</span>
+</section>
+
+<!-- ============== 02 — THE SHIFT ============== -->
+<span id="shift" class="anchor"></span>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">02 / The shift</div>
+      <div>
+        <h2>A chatbot answers.<br/>An agent <span class="italic">acts.</span></h2>
+        <p class="kicker">Most of what was called "AI" until last year was a polite text generator on the end of a chat box. The agentic delta is small in the prompt, large in the consequence — agents read your files, hold context across sessions, and execute multi-step tasks until done.</p>
+      </div>
+    </div>
+
+    <div class="shift-grid">
+      <div class="shift-card before">
+        <div class="marker"><span>Before / 2022—2024</span><span class="line"></span></div>
+        <h3>The chatbot.</h3>
+        <ul>
+          <li data-i="01">Responds to prompts. Forgets you between sessions.</li>
+          <li data-i="02">Text in, text out. No file system, no tools.</li>
+          <li data-i="03">One conversation at a time. No schedules. No callbacks.</li>
+          <li data-i="04">Cannot take action — it can only describe one.</li>
+        </ul>
+      </div>
+      <div class="shift-card after">
+        <div class="marker"><span>Now / 2025—2026</span><span class="line"></span></div>
+        <h3>The <em>agent.</em></h3>
+        <ul>
+          <li data-i="01">Proactively monitors. Acts on your behalf, within rules you set.</li>
+          <li data-i="02">Reads email, calendars, files, APIs, databases.</li>
+          <li data-i="03">Runs scheduled and parallel workflows. Wakes itself.</li>
+          <li data-i="04">Logs every action. Asks before the irreversible.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="num">/ 01 — Governance</div>
+        <h4>Settled before plug-in.</h4>
+        <p>Data sovereignty, transparency, accountability, PDPA compliance, human oversight — defined <em>before</em> the agent is connected to a single mailbox, not after.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">/ 02 — Local-first</div>
+        <h4>Your hull, your rules.</h4>
+        <p>Sensitive data stays on your infrastructure. Models are hot-swappable. The agent runs where you do, not where the vendor wants you to.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">/ 03 — Human in loop</div>
+        <h4>AI proposes. You approve.</h4>
+        <p>High-stakes actions wait for a human. Every step logged, reviewable, reversible. Never a black box.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FUNNY PANEL ============== -->
+<section class="funny">
+  <div class="wrap">
+    <div class="portrait">
+      <img src="assets/funny.jpeg" alt="Husky pilot before the mission" />
+      <div class="bubble">
+        <span class="who">// Field crew · day one</span>
+        100% goggles. 0% permissions. We'll get to the rest.
+      </div>
+    </div>
+    <div class="text">
+      <div class="lol">// A small interlude</div>
+      <h3>Take the work seriously.<br/><em>Not yourself.</em></h3>
+      <p class="lead">Three hours, a pile of laptops, a husky on every slide. AI is the dry topic; the working session doesn't have to be. We bring strong opinions, working demos, and the occasional dog photograph.</p>
+      <ul>
+        <li>No corporate platitudes about transformation.</li>
+        <li>No demos that conveniently work only when the wi-fi does.</li>
+        <li>No "AI will reshape humanity" slide. Or if there is, we'll burn it.</li>
+        <li>Snacks, two breaks, and a husky tax on every section header.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 03 — OPS LOGS ============== -->
+<span id="logs" class="anchor"></span>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">03 / Ops logs</div>
+      <div>
+        <h2>What it looks like,<br/>after the <span class="italic">slogans.</span></h2>
+        <p class="kicker">Three live deployments. Each began as a workshop very much like this one. We bring the numbers, not the marketing.</p>
+      </div>
+    </div>
+
+    <div class="cases">
+      <article class="case">
+        <div class="meta">
+          <div class="log-id">Log Entry · 001</div>
+          <div class="class">Classification / Property · Brokerage</div>
+          <h3>Real estate broker, <em>freed.</em></h3>
+          <div class="client">Client — Nejilock Technology · 40+ agents</div>
+          <div class="speaker">Reported by MengWee · Anthony</div>
+        </div>
+        <div class="body">
+          <p class="problem">Agents spent 60% of every week on admin — searching three portals, copy-pasting twenty listings, phone-tagging for viewings, forgetting follow-ups. Lead-to-viewing conversion stuck at 20%. The agent platform doesn't replace agents; it amplifies them.</p>
+          <div class="results">
+            <div class="res">
+              <div class="k">// Admin time</div>
+              <div class="v"><span class="from">60%</span><span class="arrow">→</span><span class="to">15%</span></div>
+              <div class="sub">18 hours per agent reclaimed per week.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Conversion</div>
+              <div class="v"><span class="from">20%</span><span class="arrow">→</span><span class="to">60%</span></div>
+              <div class="sub">3× lead-to-viewing.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Viewings / wk</div>
+              <div class="v"><span class="from">3</span><span class="arrow">→</span><span class="to">8</span></div>
+              <div class="sub">Same headcount, more closes.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Delivery</div>
+              <div class="v"><span class="to">12 wks</span></div>
+              <div class="sub">Break-even at month four.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="meta">
+          <div class="log-id">Log Entry · 002</div>
+          <div class="class">Classification / Operations · Events</div>
+          <h3>Event registration, <em>finished.</em></h3>
+          <div class="client">Internal · medium-sized events</div>
+          <div class="speaker">Reported by Zheng Xun</div>
+        </div>
+        <div class="body">
+          <p class="problem">Manual registration was the silent thief — 24-hour confirmation lag, 8% data-entry errors, dietary needs and accessibility lost in spreadsheets, last-minute changes patched by hand. The agent stitches form, database, calendar, and reminder cadence into one loop.</p>
+          <div class="results">
+            <div class="res">
+              <div class="k">// Confirmation lag</div>
+              <div class="v"><span class="from">24 h</span><span class="arrow">→</span><span class="to">2 min</span></div>
+              <div class="sub">From overnight to nearly instant.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Data errors</div>
+              <div class="v"><span class="from">8%</span><span class="arrow">→</span><span class="to">0.5%</span></div>
+              <div class="sub">Validation at the door.</div>
+            </div>
+            <div class="res">
+              <div class="k">// No-show rate</div>
+              <div class="v"><span class="from">18%</span><span class="arrow">→</span><span class="to">6%</span></div>
+              <div class="sub">Scheduled reminders, T-7 and T-1.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Staff / event</div>
+              <div class="v"><span class="from">12 h</span><span class="arrow">→</span><span class="to">1.5 h</span></div>
+              <div class="sub">87% reduction.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="meta">
+          <div class="log-id">Log Entry · 003</div>
+          <div class="class">Classification / Communications</div>
+          <h3>Email marketing, <em>rewritten.</em></h3>
+          <div class="client">SME segment · monthly cadence</div>
+          <div class="speaker">Reported by Teddy</div>
+        </div>
+        <div class="body">
+          <p class="problem">Generic mass mail had stalled at industry-average opens. The agent doesn't write your voice for you — it segments the list, drafts three tonal variants, picks send times, and re-engages non-openers with a different angle. Humans approve every send.</p>
+          <div class="results">
+            <div class="res">
+              <div class="k">// Open rate</div>
+              <div class="v"><span class="from">22%</span><span class="arrow">→</span><span class="to">38%</span></div>
+              <div class="sub">+16 percentage points.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Click-through</div>
+              <div class="v"><span class="from">3.5%</span><span class="arrow">→</span><span class="to">8.2%</span></div>
+              <div class="sub">2.3× engagement.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Prep time</div>
+              <div class="v"><span class="from">6 h</span><span class="arrow">→</span><span class="to">45 m</span></div>
+              <div class="sub">Per campaign.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Revenue / camp.</div>
+              <div class="v"><span class="to">+65%</span></div>
+              <div class="sub">Year-over-year, like-for-like.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PULL QUOTE ============== -->
+<section class="pull">
+  <div class="wrap">
+    <blockquote>AI doesn't replace people. It removes the <span class="hi">friction</span> that keeps them from doing their work.</blockquote>
+    <div class="by">— Ops log · 12 weeks at Nejilock</div>
+  </div>
+</section>
+
+<!-- ============== FUTURE SECTION ============== -->
+<span id="future" class="anchor"></span>
+<section class="future">
+  <div class="wrap">
+    <div class="text">
+      <div class="label">// Why you · why now</div>
+      <h2>You are not late.<br/>You are <span class="italic">early.</span></h2>
+      <p class="lead">Across Singapore, AI literacy is a generational handover — and you are the people deciding how it lands. Not the engineers. Not the executives. The staff and volunteers who actually run the work.</p>
+      <p class="lead">Two years from now, the question won't be <em style="color: var(--cyan); font-style: normal;">"do you use AI?"</em> The question will be: <em style="color: var(--paper); font-style: normal;">"who taught it your judgement?"</em></p>
+      <div class="points">
+        <div class="point">
+          <div class="n">3 / 4</div>
+          <div class="p">Singapore SMEs aware of AI. Only 1 in 25 have deployed it correctly.</div>
+        </div>
+        <div class="point">
+          <div class="n">+60 %</div>
+          <div class="p">Of fastest-growing AI users in Japan are over the age of 60.</div>
+        </div>
+        <div class="point">
+          <div class="n">5 yrs</div>
+          <div class="p">The window in which today's choices about agents become permanent defaults.</div>
+        </div>
+        <div class="point">
+          <div class="n">∞</div>
+          <div class="p">The number of people who'll inherit the systems you set up this Saturday.</div>
+        </div>
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="photo">
+        <img src="assets/TRAIN.jpeg" alt="Workshop training in progress — people, laptops, real workflows" />
+        <div class="cap">
+          <span>// Field photo · training in progress</span>
+          <span class="a">2026 · SG</span>
+        </div>
+      </div>
+
+      <div class="news-clip">
+        <div class="news-head">
+          <span>// Field evidence · the market is moving</span>
+          <span class="src">The Straits Times · Apr 2026</span>
+        </div>
+        <img src="assets/news.png" alt="News headline: China's tech giants dangle annual pay packages from $200k to woo S'pore-trained AI grads" />
+        <div class="news-foot">
+          <strong>// Reading</strong> Singapore-trained AI talent is being paid <strong style="color: var(--paper);">USD 200,000 / year</strong> starting salaries. The skill premium is not coming. It arrived in April.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 04 — SIMULATION ============== -->
+<span id="sim" class="anchor"></span>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">04 / Simulation</div>
+      <div>
+        <h2>Bring a workflow.<br/>Leave with a <span class="italic">working one.</span></h2>
+        <p class="kicker">The last hour belongs to you. Three or four groups, one PSP workflow each, a facilitator at the elbow, a live agent on the table. We end with a five-minute presentation per group — not a slide, an actual result.</p>
+      </div>
+    </div>
+
+    <div class="quest-banner">
+      <img src="assets/game.png" alt="A party of heroes assembled for the quest — your hands-on team for the next hour" />
+      <div class="overlay">
+        <div class="top">// Quest log · chapter 04 · your party is assembling</div>
+        <div class="quest-title">Form a party.<br/><em>Take the workflow.</em></div>
+        <div class="bottom">
+          <div class="roll">
+            <strong>// Roster</strong>
+            Three or four groups. One workflow each. One facilitator at the elbow. One live agent on the table. Five minutes to present back.
+          </div>
+          <div class="stats">
+            DURATION · 60 MIN<br/>
+            DIFFICULTY · RISING<br/>
+            REWARD · A WORKING TOOL
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-grid">
+      <ol class="steps">
+        <li>
+          <div class="seq">/ 01</div>
+          <div>
+            <div class="step-title">Pick a workflow.</div>
+            <div class="step-body">Choose one real PSP friction point. Map it on a single page: current state · pain points · the agentic opportunity.</div>
+          </div>
+        </li>
+        <li>
+          <div class="seq">/ 02</div>
+          <div>
+            <div class="step-title">Text the agent.</div>
+            <div class="step-body">Send a plain-language request via WhatsApp or Telegram. No coding, no console — just describe what you need done.</div>
+          </div>
+        </li>
+        <li>
+          <div class="seq">/ 03</div>
+          <div>
+            <div class="step-title">Watch it work.</div>
+            <div class="step-body">The agent accesses the demo calendar, mailbox, and files. Read the audit log line by line; nothing it does is hidden.</div>
+          </div>
+        </li>
+        <li>
+          <div class="seq">/ 04</div>
+          <div>
+            <div class="step-title">Iterate the prompt.</div>
+            <div class="step-body">Make it more formal. Add a deadline reminder. Tighten the tone. The shape of the work changes faster than a paragraph in a document.</div>
+          </div>
+        </li>
+        <li>
+          <div class="seq">/ 05</div>
+          <div>
+            <div class="step-title">Present back.</div>
+            <div class="step-body">Five minutes to your group. What worked, what surprised you, what you would actually deploy on Monday.</div>
+          </div>
+        </li>
+      </ol>
+
+      <aside class="sim-side">
+        <div class="label">// Pick your domain</div>
+        <h4>Five places to start.</h4>
+        <ul>
+          <li><span class="domain">Events</span><span>Registration, reminders, post-event surveys, photo organisation.</span></li>
+          <li><span class="domain">Comms</span><span>Newsletter drafting, member inquiries, announcement scheduling.</span></li>
+          <li><span class="domain">Ops</span><span>Meeting minutes, action-item tracking, document search.</span></li>
+          <li><span class="domain">Finance</span><span>Expense logging, reimbursement, budget monitoring.</span></li>
+          <li><span class="domain">Membership</span><span>Onboarding, renewal reminders, engagement tracking.</span></li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============== GAME / ATTITUDE ============== -->
+<section class="game">
+  <div class="wrap">
+    <div class="art">
+      <span class="corner">// Commanding officer · Ruby</span>
+      <img src="assets/ruby.jpg" alt="Ruby — mission commander, the serious counterpart to the husky" />
+    </div>
+    <div class="text">
+      <div class="label">// Our attitude</div>
+      <h2>Treat it like a <span class="italic">quest,</span><br/>not a course.</h2>
+      <p class="lead">You walked in with a problem. You leave with a working tool. In between, the only thing required is curiosity — and the willingness to look slightly silly typing instructions to an animal-shaped agent in front of a roomful of people.</p>
+
+      <div class="stance"><div class="k">/ 01</div><div><strong>Pick a hard quest.</strong> Easy workflows are training wheels. The real value is in the messy work nobody wants.</div></div>
+      <div class="stance"><div class="k">/ 02</div><div><strong>Ask out loud.</strong> If you don't understand what the agent just did, you found a problem worth fixing.</div></div>
+      <div class="stance"><div class="k">/ 03</div><div><strong>Bring proof, not slides.</strong> Five minutes per group. We want the result, not the rationale.</div></div>
+      <div class="stance"><div class="k">/ 04</div><div><strong>Take the husky home.</strong> Metaphorically. Probably.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 05 — DEPLOYMENT ============== -->
+<span id="deploy" class="anchor"></span>
+<section class="band" style="padding-bottom: 160px;">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">05 / Deployment</div>
+      <div>
+        <h2>A 90-day pilot,<br/><span class="italic">costed honestly.</span></h2>
+        <p class="kicker">Two or three workflows. Five to ten users. Two training sessions and a weekly check-in. If we can't save each user five hours a week with zero security incidents, the pilot has failed — and we both know it.</p>
+      </div>
+    </div>
+
+    <div class="deploy-grid">
+      <div>
+        <div class="cta-row" style="margin-bottom: 36px;">
+          <a class="btn btn-primary" href="mailto:enterprise@flowdaptor.com?subject=PSP%20pilot%20interest">Initiate boarding <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href="mailto:enterprise@flowdaptor.com">Open channel <span class="arrow">↗</span></a>
+        </div>
+        <p class="lead">A pilot is not a sale. It's a 90-day controlled deployment with explicit kill criteria. If the numbers don't materialise, we don't go to phase two — and you keep everything we built.</p>
+      </div>
+
+      <div class="deploy-card">
+        <span class="badge">70% PSP discount · first 90 days</span>
+        <h4>// Three phases</h4>
+        <div class="tier">
+          <div class="name">Pilot<span class="sub">1–2 workflows · 5 users · 90 days · 2 training sessions</span></div>
+          <div class="price">SGD 500<span class="u">+ S$599 / month</span></div>
+        </div>
+        <div class="tier">
+          <div class="name">Standard<span class="sub">5+ workflows · 20 users · integrations · ongoing support</span></div>
+          <div class="price">SGD 2,000<span class="u">+ S$2,000 / month</span></div>
+        </div>
+        <div class="tier">
+          <div class="name">Enterprise<span class="sub">On-premise · unlimited users · SLA · compliance audit</span></div>
+          <div class="price">Bespoke<span class="u">on request</span></div>
+        </div>
+        <div class="foot">Success criteria — ≥ 5 hours saved per user per week · zero security incidents · 80% user satisfaction over the trial window.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== BACKSTAGE — password-gated slides ============== -->
+<span id="backstage" class="anchor"></span>
+<section class="backstage" data-unlocked="false" id="backstage-section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">06 / Backstage</div>
+      <div>
+        <h2>Presentation deck,<br/><span class="italic">on the wire.</span></h2>
+        <p class="kicker">The live slide deck used during the workshop. Admin-only — ask the facilitator for the access code at the door.</p>
+      </div>
+    </div>
+
+    <div class="frame">
+      <div class="frame-head">
+        <span class="id">// Deck · PSP_AI_WORKSHOP_27JUN26.pptx</span>
+        <span class="lock"><span class="lock-label"></span> Channel restricted</span>
+      </div>
+
+      <!-- LOCKED STATE -->
+      <div class="lock-pane">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="4" y="11" width="16" height="10" rx="1.5"/>
+            <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+            <circle cx="12" cy="16" r="1" fill="#22d3ee"/>
+          </svg>
+        </div>
+        <h3>Crew access only.</h3>
+        <div class="desc">Enter the admin passcode to load the live presentation deck.</div>
+        <form class="pwd-form" id="pwd-form" autocomplete="off">
+          <input type="password" id="pwd-input" placeholder="• • • • • • •" aria-label="Admin passcode" />
+          <button type="submit">Unlock</button>
+        </form>
+        <div class="pwd-err" id="pwd-err">// Invalid code</div>
+      </div>
+
+      <!-- UNLOCKED STATE -->
+      <div class="deck-pane">
+        <div class="embed">
+          <iframe id="deck-iframe" src="deck.html" allowfullscreen loading="lazy" title="PSP AI Workshop — Presentation Deck"></iframe>
+        </div>
+        <div class="tools">
+          <span>// Live deck · PSP · 27.06.2026</span>
+          <span style="display:flex; gap:14px; align-items:center;">
+            <a href="deck.html" target="_blank" rel="noopener">Open in new tab ↗</a>
+            <button type="button" class="lock-btn" id="lock-btn">Re-lock</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <img class="vendor-mark" src="assets/vendor.png" alt="FlowDaptor" />
+      <p class="colophon">Build what does the work. <em>Then trust it.</em></p>
+      <p class="copy">A PSP × FlowDaptor working session.<br/>Built in Singapore. The husky came along.</p>
+    </div>
+    <div>
+      <h5>// Mission</h5>
+      <ul>
+        <li><a href="#plan">Flight plan</a></li>
+        <li><a href="#shift">The shift</a></li>
+        <li><a href="#logs">Ops logs</a></li>
+        <li><a href="#future">Why you</a></li>
+        <li><a href="#sim">Simulation</a></li>
+        <li><a href="#backstage">Backstage</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>// After</h5>
+      <ul>
+        <li><a href="#deploy">90-day pilot</a></li>
+        <li><a href="mailto:enterprise@flowdaptor.com">Email follow-up</a></li>
+        <li><a href="mailto:support@flowdaptor.com">Support</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>// Channel</h5>
+      <p class="copy">enterprise@flowdaptor.com<br/>FlowDaptor Pte Ltd<br/>UEN 202618046R</p>
+    </div>
+  </div>
+  <div class="wrap footer-bar">
+    <span>© 2026 · FlowDaptor Pte Ltd · Prepared for PSP</span>
+    <span>v.3 · 27.06.2026</span>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (href === '#') return;
+      const el = document.querySelector(href);
+      if (!el) return;
+      e.preventDefault();
+      const y = el.getBoundingClientRect().top + window.scrollY - 68;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+      history.replaceState(null, '', href);
+    });
+  });
+
+  /* =====================================================
+     BACKSTAGE — admin gate
+     Passcode: INOTGRUMPY  (change PASSCODE below to swap)
+     ===================================================== */
+  const PASSCODE = 'INOTGRUMPY';
+
+  (function setupBackstage(){
+    const section = document.getElementById('backstage-section');
+    const form    = document.getElementById('pwd-form');
+    const input   = document.getElementById('pwd-input');
+    const err     = document.getElementById('pwd-err');
+    const lockBtn = document.getElementById('lock-btn');
+    if (!section || !form) return;
+
+    function unlock(){
+      section.dataset.unlocked = 'true';
+      sessionStorage.setItem('psp-backstage', '1');
+      err.classList.remove('show');
+    }
+    function lock(){
+      section.dataset.unlocked = 'false';
+      sessionStorage.removeItem('psp-backstage');
+      input.value = '';
+    }
+
+    if (sessionStorage.getItem('psp-backstage') === '1') unlock();
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = (input.value || '').trim().toUpperCase();
+      if (val === PASSCODE.toUpperCase()) {
+        unlock();
+        input.value = '';
+      } else {
+        err.classList.add('show');
+        input.value = '';
+        input.focus();
+        setTimeout(() => err.classList.remove('show'), 2500);
+      }
+    });
+
+    if (lockBtn) lockBtn.addEventListener('click', lock);
+  })();
+</script>
+
+</body>
+</html>

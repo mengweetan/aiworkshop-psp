@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSP AI Workshop — Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Shippori+Mincho:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --void:        #04070d;
+  --deep:        #070b15;
+  --panel:       #0a0f1c;
+  --hair:        rgba(255, 255, 255, 0.10);
+  --hair-2:      rgba(255, 255, 255, 0.18);
+  --paper:       #ffffff;
+  --ice:         #e6edf6;
+  --slate:       #7e93ad;
+  --slate-2:     #a4b6cf;
+  --cyan:        #22d3ee;
+  --mint:        #5eead4;
+  --grad:        linear-gradient(135deg, #5eead4 0%, #22d3ee 100%);
+  --sans: "Space Grotesk", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --serif: "Instrument Serif", "Times New Roman", serif;
+  --zen:   "Shippori Mincho", "Instrument Serif", serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #000;
+  color: var(--ice);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+deck-stage {
+  --slide-bg: var(--void);
+}
+
+section {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  background: var(--void);
+  color: var(--ice);
+  font-family: var(--sans);
+  padding: 80px 100px;
+  overflow: hidden;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 90% -10%, rgba(34, 211, 238, 0.08), transparent 60%),
+    radial-gradient(ellipse 40% 40% at 0% 100%, rgba(94, 234, 212, 0.06), transparent 70%);
+}
+
+/* Chrome — top bar, slide number, footer */
+.chrome-top, .chrome-foot {
+  position: absolute;
+  left: 100px; right: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+.chrome-top { top: 48px; }
+.chrome-foot { bottom: 48px; }
+.chrome-top .seg { color: var(--paper); }
+.chrome-top .seg .a {
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+.chrome-foot .lock {
+  display: flex; align-items: center; gap: 16px;
+}
+.chrome-foot .vendor {
+  height: 22px; mix-blend-mode: screen;
+}
+.chrome-foot .psp {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--paper);
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+.chrome-foot .psp img { width: 80%; height: 80%; object-fit: contain; }
+
+/* Type primitives */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  font-weight: 500;
+  margin-bottom: 32px;
+}
+h1.title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 160px;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  color: var(--paper);
+}
+h1.title em, h2.title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.025em;
+}
+h2.title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 116px;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--paper);
+}
+h3.subtitle {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 92px;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--paper);
+}
+.lead {
+  font-family: var(--sans);
+  font-size: 32px;
+  line-height: 1.4;
+  color: var(--slate-2);
+  font-weight: 400;
+  max-width: 1500px;
+  letter-spacing: -0.005em;
+}
+
+/* ============== SLIDE PATTERNS ============== */
+
+/* Title slide */
+.s-title {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 80px;
+  align-items: center;
+  padding: 120px;
+}
+.s-title .col-left .small {
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 40px;
+}
+.s-title .col-left h1 {
+  font-size: 180px;
+  line-height: 0.88;
+}
+.s-title .col-left .meta {
+  margin-top: 56px;
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.06em;
+  color: var(--slate-2);
+  line-height: 1.7;
+}
+.s-title .col-left .meta strong { color: var(--paper); font-weight: 500; }
+.s-title .specimen {
+  border: 1px solid var(--hair);
+  background: var(--panel);
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 4.5;
+}
+.s-title .specimen::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--grad); z-index: 2;
+}
+.s-title .specimen img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.s-title .specimen::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(4, 7, 13, 0.92) 100%);
+}
+.s-title .specimen .id {
+  position: absolute; bottom: 28px; left: 28px; right: 28px;
+  z-index: 3;
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.s-title .specimen .id .a {
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+.s-title .specimen .id .sub {
+  display: block;
+  color: var(--slate); margin-top: 8px;
+  font-size: 24px;
+}
+
+/* Section divider */
+.s-divider {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--deep);
+  position: relative;
+}
+.s-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.4;
+  transform: translateY(-50%);
+}
+.s-divider .num {
+  font-family: var(--mono);
+  font-size: 360px;
+  line-height: 0.85;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  margin-bottom: 24px;
+}
+.s-divider .of {
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.22em;
+  color: var(--slate);
+  text-transform: uppercase;
+  margin-bottom: 64px;
+}
+.s-divider .name {
+  font-size: 152px;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--paper);
+  font-weight: 700;
+}
+.s-divider .name em {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.s-divider .speaker {
+  margin-top: 56px;
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--slate-2);
+}
+.s-divider .speaker .a {
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+/* Standard content slide */
+.s-content { padding-top: 160px; padding-bottom: 160px; }
+.s-content h2 { max-width: 1500px; margin-bottom: 48px; }
+.s-content .body { margin-top: 48px; }
+
+/* Tables */
+.tbl {
+  display: grid;
+  width: 100%;
+  border: 1px solid var(--hair);
+  background: var(--deep);
+  font-family: var(--sans);
+}
+.tbl .row {
+  display: grid;
+  border-top: 1px solid var(--hair);
+  align-items: center;
+}
+.tbl .row:first-child { border-top: none; }
+.tbl .row.head {
+  background: rgba(255, 255, 255, 0.03);
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--slate);
+  font-weight: 500;
+}
+.tbl .row.head .cell { padding: 16px 24px; }
+.tbl .row .cell {
+  padding: 14px 24px;
+  font-size: 26px;
+  line-height: 1.3;
+  color: var(--ice);
+}
+.tbl .row .cell.k {
+  font-weight: 600; color: var(--paper);
+}
+.tbl .row .cell.muted { color: var(--slate-2); }
+.tbl .row .cell.accent {
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+/* 2-up cards / 3-up pillars */
+.grid {
+  display: grid; gap: 24px;
+}
+.grid.g2 { grid-template-columns: 1fr 1fr; }
+.grid.g3 { grid-template-columns: repeat(3, 1fr); }
+.grid.g4 { grid-template-columns: repeat(4, 1fr); }
+.card {
+  background: var(--deep);
+  border: 1px solid var(--hair);
+  padding: 42px 36px;
+  position: relative;
+}
+.card.glow::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: var(--grad); opacity: 0.7;
+}
+.card .num {
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.18em;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+.card h4 {
+  font-family: var(--sans);
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.0;
+  color: var(--paper);
+  margin-bottom: 20px;
+}
+.card p {
+  font-size: 24px;
+  line-height: 1.5;
+  color: var(--slate-2);
+}
+.card.dark {
+  background: linear-gradient(135deg, rgba(94, 234, 212, 0.05), rgba(34, 211, 238, 0.03));
+}
+
+/* Numbered list (steps) */
+.steps {
+  list-style: none;
+}
+.steps li {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 32px;
+  padding: 18px 0;
+  border-top: 1px solid var(--hair);
+}
+.steps li:first-child { border-top: 1px solid var(--hair-2); }
+.steps li:last-child { border-bottom: 1px solid var(--hair-2); }
+.steps .seq {
+  font-family: var(--mono);
+  font-size: 26px;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  padding-top: 6px;
+}
+.steps .step-t {
+  font-family: var(--sans);
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--paper);
+  margin-bottom: 8px;
+  line-height: 1.05;
+}
+.steps .step-b {
+  font-size: 24px;
+  color: var(--slate-2);
+  line-height: 1.5;
+}
+
+/* Architecture diagram (mono pre) */
+.arch {
+  background: var(--deep);
+  border: 1px solid var(--hair);
+  padding: 48px 56px;
+  font-family: var(--mono);
+  font-size: 26px;
+  line-height: 1.7;
+  color: var(--ice);
+  white-space: pre;
+  overflow: hidden;
+}
+.arch .arr { color: var(--cyan); }
+
+/* Results 2x2 grid */
+.results {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--hair);
+  background: var(--deep);
+}
+.results .res {
+  padding: 40px 40px;
+  border-left: 1px solid var(--hair);
+  border-top: 1px solid var(--hair);
+}
+.results .res:nth-child(-n+2) { border-top: none; }
+.results .res:nth-child(2n+1) { border-left: none; }
+.results .res .k {
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 18px;
+}
+.results .res .v {
+  font-family: var(--mono);
+  font-size: 56px;
+  font-weight: 500;
+  color: var(--paper);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.results .res .v .from { color: var(--slate-2); }
+.results .res .v .arrow,
+.results .res .v .to {
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.results .res .v .arrow { padding: 0 12px; font-weight: 400; }
+.results .res .sub {
+  font-size: 24px;
+  color: var(--slate);
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+/* Quote slide */
+.s-quote {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 50%, rgba(34, 211, 238, 0.10), transparent 70%),
+    var(--void);
+  padding: 160px 120px;
+}
+.s-quote blockquote {
+  font-family: var(--serif);
+  font-size: 132px;
+  font-style: italic;
+  line-height: 1.0;
+  font-weight: 400;
+  color: var(--paper);
+  letter-spacing: -0.025em;
+  max-width: 22ch;
+}
+.s-quote blockquote .hi {
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.s-quote .by {
+  margin-top: 64px;
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+/* Zen slide (Fuji background) */
+.s-zen {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 13, 0.55) 0%, rgba(4, 7, 13, 0.85) 100%),
+    url('assets/FUJI.jpg') center 30% / cover no-repeat,
+    var(--void);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 64px;
+}
+.s-zen .mark {
+  font-family: var(--zen);
+  font-size: 92px;
+  color: var(--paper);
+  letter-spacing: 0.4em;
+  text-shadow: 0 0 80px rgba(34, 211, 238, 0.4);
+}
+.s-zen .mark .small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-top: 28px;
+  text-shadow: none;
+}
+.s-zen .haiku {
+  font-family: var(--zen);
+  font-size: 56px;
+  line-height: 1.5;
+  color: var(--paper);
+  max-width: 28ch;
+}
+.s-zen .haiku em {
+  font-style: italic;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Closing slide */
+.s-close {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 50%, rgba(94, 234, 212, 0.18), transparent 70%),
+    var(--deep);
+  text-align: center;
+  align-items: center;
+  padding: 120px;
+}
+.s-close .small {
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 56px;
+}
+.s-close h1 {
+  font-size: 240px;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  color: var(--paper);
+  margin-bottom: 64px;
+}
+.s-close h1 em {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.s-close .contact {
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.06em;
+  color: var(--slate-2);
+  line-height: 1.7;
+}
+.s-close .contact a { color: var(--cyan); text-decoration: none; }
+
+/* Big stat */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  margin-top: 48px;
+}
+.stat .n {
+  font-family: var(--mono);
+  font-size: 72px;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.stat .l {
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.06em;
+  color: var(--slate-2);
+  line-height: 1.5;
+}
+
+/* Case-study left meta panel */
+.case-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 80px;
+  align-items: start;
+  margin-top: 56px;
+}
+.case-meta .log {
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.2em;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+.case-meta .cls {
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--slate);
+  border: 1px solid var(--hair-2);
+  padding: 10px 18px;
+  display: inline-block;
+  margin-bottom: 40px;
+}
+.case-meta h3 {
+  font-size: 84px;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--paper);
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+.case-meta h3 em {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.case-meta .client {
+  font-family: var(--mono);
+  font-size: 24px;
+  color: var(--slate-2);
+  margin-bottom: 8px;
+}
+.case-meta .speaker {
+  font-family: var(--mono);
+  font-size: 24px;
+  color: var(--slate);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Domain list (5 areas) */
+.domain-list {
+  list-style: none;
+  margin-top: 56px;
+}
+.domain-list li {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 40px;
+  padding: 28px 0;
+  border-top: 1px solid var(--hair);
+}
+.domain-list li:last-child { border-bottom: 1px solid var(--hair-2); }
+.domain-list li:first-child { border-top: 1px solid var(--hair-2); }
+.domain-list .d {
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  padding-top: 6px;
+}
+.domain-list .d-body {
+  font-size: 28px;
+  line-height: 1.45;
+  color: var(--ice);
+}
+
+/* Funny / Game image slides */
+.s-image-split {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 80px;
+  align-items: center;
+  padding: 140px 120px;
+}
+.s-image-split .frame {
+  border: 1px solid var(--hair);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 3 / 4;
+}
+.s-image-split .frame img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.s-image-split .frame::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--grad); z-index: 2;
+}
+.s-image-split.l-image-r-text { grid-template-columns: 0.95fr 1.05fr; }
+.s-image-split.r-image-l-text { grid-template-columns: 1.05fr 0.95fr; }
+.s-image-split.r-image-l-text .frame { order: 2; }
+.s-image-split.r-image-l-text .frame.landscape { aspect-ratio: 4/3; }
+.s-image-split .frame.landscape { aspect-ratio: 4/3; }
+.s-image-split .text h2 {
+  font-size: 96px;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--paper);
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+.s-image-split .text h2 em {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.s-image-split .text .lead {
+  font-size: 28px;
+  line-height: 1.5;
+  color: var(--slate-2);
+  margin-bottom: 32px;
+}
+.s-image-split .text ul {
+  list-style: none;
+}
+.s-image-split .text li {
+  padding: 16px 0;
+  border-top: 1px solid var(--hair);
+  font-family: var(--mono);
+  font-size: 20px;
+  color: var(--slate-2);
+  display: flex; gap: 20px; align-items: baseline;
+}
+.s-image-split .text li::before {
+  content: "·";
+  color: var(--cyan); font-size: 36px; line-height: 1;
+}
+
+/* Inline helper styles */
+.kicker {
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  color: var(--slate-2);
+  margin-top: 24px;
+  line-height: 1.6;
+}
+.pill {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border: 1px solid var(--hair-2);
+  color: var(--slate-2);
+  margin-right: 8px;
+}
+.pill.cyan {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+</style>
+</head>
+<body>
+
+<deck-stage>
+
+<!-- ============================================================
+     01. TITLE
+     ============================================================ -->
+<section class="s-title" data-screen-label="01 Title">
+  <div class="col-left">
+    <div class="small">PSP × FlowDaptor · Working Session</div>
+    <h1>From generative<br/>to <em>agentic.</em></h1>
+    <div class="meta">
+      <strong>27.06.2026</strong> · Sat · 14:00 — 17:00 SGT<br/>
+      PSP HQ, Singapore · 30 seats · 3 hours
+    </div>
+  </div>
+  <div class="specimen">
+    <img src="assets/DOG.jpeg" alt="Astronaut shiba — workshop crew" />
+    <div class="id">
+      <span class="a">SPECIMEN · 01 / OpenClaw</span>
+      <span class="sub">Class agentic · Frame Δ</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     02. AGENDA
+     ============================================================ -->
+<section class="s-content" data-screen-label="02 Agenda">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">00</span> · Agenda</span>
+    <span>02 / 26</span>
+  </div>
+
+  <div class="eyebrow">// The next 195 minutes</div>
+  <h2 class="title" style="font-size: 84px; margin-bottom: 32px;">Seven segments,<br/><em>one trajectory.</em></h2>
+
+  <div class="body" style="margin-top: 24px;">
+    <div class="tbl" style="grid-template-rows: auto;">
+      <div class="row head" style="grid-template-columns: 100px 200px 1fr 360px 160px;">
+        <div class="cell">Seg.</div>
+        <div class="cell">T-Minus</div>
+        <div class="cell">Objective</div>
+        <div class="cell">Crew</div>
+        <div class="cell">Duration</div>
+      </div>
+      <div class="row" style="grid-template-columns: 100px 200px 1fr 360px 160px;">
+        <div class="cell accent">i.</div><div class="cell muted">T+00:00</div>
+        <div class="cell k">AI introduction &amp; governance</div>
+        <div class="cell muted">Harish</div><div class="cell accent">20 min</div>
+      </div>
+      <div class="row" style="grid-template-columns: 100px 200px 1fr 360px 160px;">
+        <div class="cell accent">ii.</div><div class="cell muted">T+00:20</div>
+        <div class="cell k">Overview of AI agents</div>
+        <div class="cell muted">CS Chong</div><div class="cell accent">15 min</div>
+      </div>
+      <div class="row" style="grid-template-columns: 100px 200px 1fr 360px 160px;">
+        <div class="cell accent">iii.</div><div class="cell muted">T+00:35</div>
+        <div class="cell k">Risk &amp; deployment model</div>
+        <div class="cell muted">MengWee</div><div class="cell accent">15 min</div>
+      </div>
+      <div class="row" style="grid-template-columns: 100px 200px 1fr 360px 160px;">
+        <div class="cell accent">iv.</div><div class="cell muted">T+00:50</div>
+        <div class="cell k">Applications &amp; deep dive</div>
+        <div class="cell muted">MengWee</div><div class="cell accent">30 min</div>
+      </div>
+      <div class="row" style="grid-template-columns: 100px 200px 1fr 360px 160px;">
+        <div class="cell accent">v.</div><div class="cell muted">T+01:20</div>
+        <div class="cell k">Field notes — three case studies</div>
+        <div class="cell muted">MengWee · Zheng Xun · Teddy</div><div class="cell accent">45 min</div>
+      </div>
+      <div class="row" style="grid-template-columns: 100px 200px 1fr 360px 160px;">
+        <div class="cell accent">vi.</div><div class="cell muted">T+02:05</div>
+        <div class="cell k">Hands-on &amp; group presentations</div>
+        <div class="cell muted">CS · MengWee · Anthony · Harish</div><div class="cell accent">60 min</div>
+      </div>
+      <div class="row" style="grid-template-columns: 100px 200px 1fr 360px 160px;">
+        <div class="cell accent">vii.</div><div class="cell muted">T+03:05</div>
+        <div class="cell k">Conclusion &amp; next steps</div>
+        <div class="cell muted">Sec Gen</div><div class="cell accent">10 min</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     03. DIVIDER 01 — AI INTRO & GOVERNANCE
+     ============================================================ -->
+<section class="s-divider" data-screen-label="03 Section 01">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">01</span> · Section</span>
+    <span>03 / 26</span>
+  </div>
+  <div class="num">01</div>
+  <div class="of">Segment one of seven</div>
+  <h2 class="name">AI introduction &amp;<br/><em>governance.</em></h2>
+  <div class="speaker">Speaker <span class="a">·</span> Harish <span class="a">·</span> 20 minutes</div>
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     04. WHAT AI IS — three layers
+     ============================================================ -->
+<section class="s-content" data-screen-label="04 AI is three layers">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">01</span> · AI &amp; governance</span>
+    <span>04 / 26</span>
+  </div>
+
+  <div class="eyebrow">// What AI actually is</div>
+  <h2 class="title">Three layers.<br/><em>One stack.</em></h2>
+
+  <div class="body">
+    <div class="tbl">
+      <div class="row head" style="grid-template-columns: 1fr 1.5fr 1.5fr;">
+        <div class="cell">Layer</div><div class="cell">Function</div><div class="cell">Examples</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1.5fr 1.5fr;">
+        <div class="cell k">Foundation models</div>
+        <div class="cell muted">Pattern recognition · generation</div>
+        <div class="cell accent">GPT-4 · Claude · Kimi · Gemini</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1.5fr 1.5fr;">
+        <div class="cell k">Agent frameworks</div>
+        <div class="cell muted">Orchestration · AI → tools · data · APIs</div>
+        <div class="cell accent">OpenClaw · LangChain · n8n</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1.5fr 1.5fr;">
+        <div class="cell k">Business applications</div>
+        <div class="cell muted">Your workflow</div>
+        <div class="cell accent">Custom · SaaS · You</div>
+      </div>
+    </div>
+
+    <p class="kicker" style="margin-top: 56px;">// Key distinction <span style="color: var(--cyan);">·</span> Generative AI <strong style="color: var(--paper);">creates content.</strong> Agentic AI <strong style="color: var(--paper);">executes tasks.</strong></p>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     05. FOUR TYPES OF AI
+     ============================================================ -->
+<section class="s-content" data-screen-label="05 Four AI types">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">01</span> · AI &amp; governance</span>
+    <span>05 / 26</span>
+  </div>
+
+  <div class="eyebrow">// The four kinds in play</div>
+  <h2 class="title" style="font-size: 84px; margin-bottom: 32px;">Not all AI is <em>the same.</em></h2>
+
+  <div class="body" style="display: grid; grid-template-columns: 1.4fr 0.85fr; gap: 64px; align-items: stretch; margin-top: 32px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-content: start;">
+      <div class="card glow">
+        <div class="num">/ i · Generative</div>
+        <h4>Creates.</h4>
+        <p>Text · images · audio · video. Dola · OpenArt · ChatGPT. For drafting and brainstorming.</p>
+      </div>
+      <div class="card glow">
+        <div class="num">/ ii · Coding</div>
+        <h4>Builds.</h4>
+        <p>Writes, completes, refactors code. Codex · Claude. For automation and software.</p>
+      </div>
+      <div class="card glow">
+        <div class="num">/ iii · Web-based</div>
+        <h4>Researches.</h4>
+        <p>Reads, summarises, answers. Claude.ai · Comet · NotebookLM. Knowledge work.</p>
+      </div>
+      <div class="card glow dark">
+        <div class="num">/ iv · Agentic</div>
+        <h4>Does.</h4>
+        <p>Multi-step tasks with tools and data. OpenClaw · Hermes. <em style="color: var(--cyan); font-style: normal;">Today's focus.</em></p>
+      </div>
+    </div>
+
+    <div style="position: relative; align-self: stretch;">
+      <div style="position: absolute; inset: 0; border: 1px solid var(--hair); background: var(--deep); overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--grad); z-index: 3;"></div>
+        <div style="position: absolute; top: 0; left: 0; right: 0; padding: 18px 22px; font-family: var(--mono); font-size: 24px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cyan); border-bottom: 1px solid var(--hair); background: rgba(4, 7, 13, 0.9); z-index: 2; backdrop-filter: blur(8px);">
+          // Live example · Generative AI
+        </div>
+        <img src="assets/genai.png" alt="Telegram chat with a generative AI bot creating images and video on command" style="width: 100%; height: 100%; object-fit: cover; object-position: top center;" />
+        <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 24px; font-family: var(--mono); font-size: 24px; letter-spacing: 0.04em; color: var(--ice); background: linear-gradient(180deg, transparent 0%, rgba(4, 7, 13, 0.94) 60%); z-index: 2; line-height: 1.4;">
+          "Generate 10s vertical video,<br/>9:16, Ruby in Martian command hub."
+          <div style="font-family: var(--mono); font-size: 24px; color: var(--cyan); letter-spacing: 0.16em; text-transform: uppercase; margin-top: 10px;">// Plain text in. Media out.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     06. GOVERNANCE PRINCIPLES
+     ============================================================ -->
+<section class="s-content" data-screen-label="06 Governance">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">01</span> · AI &amp; governance</span>
+    <span>06 / 26</span>
+  </div>
+
+  <div class="eyebrow">// Settled before plug-in</div>
+  <h2 class="title" style="font-size: 84px; margin-bottom: 32px;">Five things to <em>decide first.</em></h2>
+
+  <div class="body">
+    <ol class="steps">
+      <li>
+        <div class="seq">/ 01</div>
+        <div>
+          <div class="step-t">Data sovereignty.</div>
+          <div class="step-b">Where does your data go? Who controls it once it leaves?</div>
+        </div>
+      </li>
+      <li>
+        <div class="seq">/ 02</div>
+        <div>
+          <div class="step-t">Transparency.</div>
+          <div class="step-b">Can you audit AI actions and decisions, end-to-end?</div>
+        </div>
+      </li>
+      <li>
+        <div class="seq">/ 03</div>
+        <div>
+          <div class="step-t">Accountability.</div>
+          <div class="step-b">Who's responsible when the agent makes a mistake?</div>
+        </div>
+      </li>
+      <li>
+        <div class="seq">/ 04</div>
+        <div>
+          <div class="step-t">Privacy compliance.</div>
+          <div class="step-b">PDPA requirements for Singapore organisations — at the door, not after.</div>
+        </div>
+      </li>
+      <li>
+        <div class="seq">/ 05</div>
+        <div>
+          <div class="step-t">Human oversight.</div>
+          <div class="step-b">Critical checkpoints for high-stakes decisions. AI proposes, you approve.</div>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     07. RISK CATEGORIES + SG CONTEXT
+     ============================================================ -->
+<section class="s-content" data-screen-label="07 SG context">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">01</span> · AI &amp; governance</span>
+    <span>07 / 26</span>
+  </div>
+
+  <div class="eyebrow">// Singapore context</div>
+  <h2 class="title">Aware, but <em>not deployed.</em></h2>
+
+  <div class="body">
+    <div class="stat-row">
+      <div class="stat">
+        <div class="n">67 %</div>
+        <div class="l">Of Singapore SMEs report being aware of AI in some form.</div>
+      </div>
+      <div class="stat">
+        <div class="n">4 %</div>
+        <div class="l">Have actually deployed it correctly. The gap is the opportunity.</div>
+      </div>
+      <div class="stat">
+        <div class="n">IMDA</div>
+        <div class="l">Model AI Governance Framework. PDPC advisory guidelines on AI recommender systems.</div>
+      </div>
+      <div class="stat">
+        <div class="n">PDPA</div>
+        <div class="l">Revised accountability + data portability provisions. The legal floor, not the ceiling.</div>
+      </div>
+    </div>
+
+    <p class="kicker" style="margin-top: 80px;">// The four risks to watch <span style="color: var(--cyan);">·</span> data leakage · hallucination · bias · compliance drift. Mitigation: private deployment, verification layers, audits, audit trails.</p>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     08. DIVIDER 02 — AI AGENTS
+     ============================================================ -->
+<section class="s-divider" data-screen-label="08 Section 02">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">02</span> · Section</span>
+    <span>08 / 26</span>
+  </div>
+  <div class="num">02</div>
+  <div class="of">Segment two of seven</div>
+  <h2 class="name">Overview of<br/><em>AI agents.</em></h2>
+  <div class="speaker">Speaker <span class="a">·</span> CS Chong <span class="a">·</span> 15 minutes</div>
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     09. CHATBOT vs AGENT
+     ============================================================ -->
+<section class="s-content" data-screen-label="09 Chatbot vs Agent">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">02</span> · AI agents</span>
+    <span>09 / 26</span>
+  </div>
+
+  <div class="eyebrow">// The delta</div>
+  <h2 class="title">A chatbot answers.<br/>An agent <em>acts.</em></h2>
+
+  <div class="body">
+    <div class="tbl">
+      <div class="row head" style="grid-template-columns: 1fr 1fr;">
+        <div class="cell">Traditional chatbot</div>
+        <div class="cell">AI agent</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1fr;">
+        <div class="cell muted">Responds to prompts.</div>
+        <div class="cell k">Proactively monitors and acts.</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1fr;">
+        <div class="cell muted">No memory between sessions.</div>
+        <div class="cell k">Persistent memory and context.</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1fr;">
+        <div class="cell muted">Text in, text out.</div>
+        <div class="cell k">Files, APIs, databases, tools.</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1fr;">
+        <div class="cell muted">One conversation at a time.</div>
+        <div class="cell k">Scheduled tasks · parallel workflows.</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1fr;">
+        <div class="cell muted">Cannot take action.</div>
+        <div class="cell k">Sends emails · updates records · triggers processes.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     10. AGENT ARCHITECTURE
+     ============================================================ -->
+<section class="s-content" data-screen-label="10 Architecture">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">02</span> · AI agents</span>
+    <span>10 / 26</span>
+  </div>
+
+  <div class="eyebrow">// Anatomy</div>
+  <h2 class="title">Five layers.<br/><em>Hot-swappable.</em></h2>
+
+  <div class="body">
+    <div class="arch">User                       <span class="arr">→</span>  Telegram · WhatsApp · Email · Web · Voice
+   <span class="arr">↓</span>
+Gateway                    <span class="arr">→</span>  Sessions · context · memory · multi-agent
+   <span class="arr">↓</span>
+Skills                     <span class="arr">→</span>  Email · Calendar · Files · Search · APIs
+   <span class="arr">↓</span>
+Models (hot-swappable)     <span class="arr">→</span>  GPT-4 · Claude · Gemini · Kimi · local
+   <span class="arr">↓</span>
+Data                       <span class="arr">→</span>  Vector DB · SQL · Filesystem · CRM · ERP</div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     11. PRIVACY & CONTROL
+     ============================================================ -->
+<section class="s-content" data-screen-label="11 Privacy & control">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">02</span> · AI agents</span>
+    <span>11 / 26</span>
+  </div>
+
+  <div class="eyebrow">// Four pillars of control</div>
+  <h2 class="title">Your hull,<br/><em>your rules.</em></h2>
+
+  <div class="body">
+    <div class="grid g4">
+      <div class="card glow">
+        <div class="num">/ 01</div>
+        <h4>Local-first.</h4>
+        <p>The agent runs on your infrastructure, not the vendor's.</p>
+      </div>
+      <div class="card glow">
+        <div class="num">/ 02</div>
+        <h4>Selective cloud.</h4>
+        <p>Models only — never your data. Hot-swappable model layer.</p>
+      </div>
+      <div class="card glow">
+        <div class="num">/ 03</div>
+        <h4>Audit trails.</h4>
+        <p>Every action timestamped and reviewable, line by line.</p>
+      </div>
+      <div class="card glow dark">
+        <div class="num">/ 04</div>
+        <h4>Opt-in sharing.</h4>
+        <p>No data used for training without explicit consent.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     12. ZEN INTERLUDE
+     ============================================================ -->
+<section class="s-zen" data-screen-label="12 Zen interlude">
+  <div class="chrome-top">
+    <span class="seg" style="color: var(--paper);"><span class="a">·</span> Interval</span>
+    <span style="color: var(--paper);">12 / 26</span>
+  </div>
+  <div class="mark">
+    静
+    <span class="small">Stillness · before the agent acts</span>
+  </div>
+  <div class="haiku">
+    Move slowly.<br/>
+    Teach it where the lines are.<br/>
+    Then <em>trust it to move.</em>
+  </div>
+  <div class="chrome-foot">
+    <span style="color: var(--paper);">// Field note · before deployment</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     13. DIVIDER 03 — RISK & DEPLOYMENT
+     ============================================================ -->
+<section class="s-divider" data-screen-label="13 Section 03">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">03</span> · Section</span>
+    <span>13 / 26</span>
+  </div>
+  <div class="num">03</div>
+  <div class="of">Segment three of seven</div>
+  <h2 class="name">Risk &amp;<br/><em>deployment.</em></h2>
+  <div class="speaker">Speaker <span class="a">·</span> MengWee <span class="a">·</span> 15 minutes</div>
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     14. RISK MATRIX
+     ============================================================ -->
+<section class="s-content" data-screen-label="14 Risk matrix">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">03</span> · Risk &amp; deployment</span>
+    <span>14 / 26</span>
+  </div>
+
+  <div class="eyebrow">// Match the review to the risk</div>
+  <h2 class="title">A risk matrix<br/>for <em>real workflows.</em></h2>
+
+  <div class="body">
+    <div class="tbl">
+      <div class="row head" style="grid-template-columns: 1fr 1.6fr 1fr 1.2fr;">
+        <div class="cell">Impact</div><div class="cell">Examples</div><div class="cell">Review</div><div class="cell">Rollout</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1.6fr 1fr 1.2fr;">
+        <div class="cell accent">Low</div>
+        <div class="cell muted">Meeting summaries · draft emails</div>
+        <div class="cell k">Spot-check</div>
+        <div class="cell muted">Immediate</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1.6fr 1fr 1.2fr;">
+        <div class="cell accent">Medium</div>
+        <div class="cell muted">Data analysis · report generation</div>
+        <div class="cell k">Review before use</div>
+        <div class="cell muted">Pilot · 2–3 users</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1.6fr 1fr 1.2fr;">
+        <div class="cell accent">High</div>
+        <div class="cell muted">Customer comms · financial records</div>
+        <div class="cell k">Approve every output</div>
+        <div class="cell muted">Staged with metrics</div>
+      </div>
+      <div class="row" style="grid-template-columns: 1fr 1.6fr 1fr 1.2fr;">
+        <div class="cell accent">Critical</div>
+        <div class="cell muted">Legal · medical · personnel</div>
+        <div class="cell k">Multiple approvals + audit</div>
+        <div class="cell muted">Extended pilot</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     15. DEPLOYMENT MODELS
+     ============================================================ -->
+<section class="s-content" data-screen-label="15 Deployment models">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">03</span> · Risk &amp; deployment</span>
+    <span>15 / 26</span>
+  </div>
+
+  <div class="eyebrow">// Three places the agent can live</div>
+  <h2 class="title">Cloud. On-prem.<br/><em>Hybrid.</em></h2>
+
+  <div class="body">
+    <div class="grid g3">
+      <div class="card glow">
+        <div class="num">/ 01 · Cloud SaaS</div>
+        <h4>Fast.</h4>
+        <p>Hours to days to set up. Lower cost. But data leaves your control.</p>
+        <p style="margin-top: 16px; color: var(--cyan); font-family: var(--mono); font-size: 24px; letter-spacing: 0.1em;">Best for low-sensitivity pilots.</p>
+      </div>
+      <div class="card glow dark">
+        <div class="num">/ 02 · On-premise</div>
+        <h4>Sovereign.</h4>
+        <p>Full data control. PDPA-friendly. Customisable. Higher setup; needs IT.</p>
+        <p style="margin-top: 16px; color: var(--cyan); font-family: var(--mono); font-size: 24px; letter-spacing: 0.1em;">Best for sensitive data.</p>
+      </div>
+      <div class="card glow">
+        <div class="num">/ 03 · Hybrid</div>
+        <h4>Both.</h4>
+        <p>Data on-prem. Models in cloud. Balance of control and convenience.</p>
+        <p style="margin-top: 16px; color: var(--cyan); font-family: var(--mono); font-size: 24px; letter-spacing: 0.1em;">Best for mixed workloads.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     16. PSP DATA ZONES
+     ============================================================ -->
+<section class="s-content" data-screen-label="16 PSP data zones">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">03</span> · Risk &amp; deployment</span>
+    <span>16 / 26</span>
+  </div>
+
+  <div class="eyebrow">// PSP-specific</div>
+  <h2 class="title">Four zones.<br/><em>Four rules.</em></h2>
+
+  <div class="body">
+    <ul class="domain-list">
+      <li>
+        <div class="d">Public</div>
+        <div class="d-body">Event details, general announcements. <span style="color: var(--cyan);">Any AI model is fine.</span></div>
+      </li>
+      <li>
+        <div class="d">Internal</div>
+        <div class="d-body">Member lists, attendance records. <span style="color: var(--cyan);">Private deployment preferred.</span></div>
+      </li>
+      <li>
+        <div class="d">Confidential</div>
+        <div class="d-body">Financial data, personal member info. <span style="color: var(--cyan);">On-premise required.</span></div>
+      </li>
+      <li>
+        <div class="d">Restricted</div>
+        <div class="d-body">Governance, personnel matters. <span style="color: var(--cyan);">Human-only. AI-assisted summaries at most.</span></div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     17. DIVIDER 04 — DEEP DIVE
+     ============================================================ -->
+<section class="s-divider" data-screen-label="17 Section 04">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">04</span> · Section</span>
+    <span>17 / 26</span>
+  </div>
+  <div class="num">04</div>
+  <div class="of">Segment four of seven</div>
+  <h2 class="name">Applications &amp;<br/><em>deep dive.</em></h2>
+  <div class="speaker">Speaker <span class="a">·</span> MengWee <span class="a">·</span> 30 minutes</div>
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     18. FIVE SCENARIOS
+     ============================================================ -->
+<section class="s-content" data-screen-label="18 Five scenarios">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">04</span> · Applications</span>
+    <span>18 / 26</span>
+  </div>
+
+  <div class="eyebrow">// Five things an agent could do today</div>
+  <h2 class="title" style="font-size: 84px; margin-bottom: 32px;">Live demo.<br/><em>Five tasks.</em></h2>
+
+  <div class="body">
+    <ol class="steps">
+      <li>
+        <div class="seq">/ 01</div>
+        <div>
+          <div class="step-t">Email intelligence.</div>
+          <div class="step-b">"Find emails from committee about June events, extract action items, rank by urgency."</div>
+        </div>
+      </li>
+      <li>
+        <div class="seq">/ 02</div>
+        <div>
+          <div class="step-t">Calendar coordination.</div>
+          <div class="step-b">"Find a 2-hour slot next week for four people. Avoid lunch hours. Propose three options."</div>
+        </div>
+      </li>
+      <li>
+        <div class="seq">/ 03</div>
+        <div>
+          <div class="step-t">Event registration.</div>
+          <div class="step-b">"New registration — validate, store, confirm by email, add to tracker. Flag the vegetarian."</div>
+        </div>
+      </li>
+      <li>
+        <div class="seq">/ 04</div>
+        <div>
+          <div class="step-t">Document intelligence.</div>
+          <div class="step-b">"Summarise last board meeting minutes. Highlight pending decisions and who owns them."</div>
+        </div>
+      </li>
+      <li>
+        <div class="seq">/ 05</div>
+        <div>
+          <div class="step-t">Proactive monitoring.</div>
+          <div class="step-b">Agent: "Registration deadline is tomorrow. 12 spots remaining. Should I send the reminder?"</div>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     19. DIVIDER 05 — FIELD NOTES
+     ============================================================ -->
+<section class="s-divider" data-screen-label="19 Section 05">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">05</span> · Section</span>
+    <span>19 / 26</span>
+  </div>
+  <div class="num">05</div>
+  <div class="of">Segment five of seven</div>
+  <h2 class="name">Field notes —<br/><em>three case studies.</em></h2>
+  <div class="speaker">MengWee · Anthony · Zheng Xun · Teddy <span class="a">·</span> 45 minutes</div>
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     20. CASE 1 — RE BROKERING
+     ============================================================ -->
+<section class="s-content" data-screen-label="20 Case 1 Nejilock">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">05</span> · Field notes</span>
+    <span>20 / 26</span>
+  </div>
+
+  <div class="case-grid">
+    <div class="case-meta">
+      <div class="log">Log Entry · 001</div>
+      <div class="cls">Property · Brokerage</div>
+      <h3>Real estate broker,<br/><em>freed.</em></h3>
+      <div class="client">Client — Nejilock Technology · 40+ agents</div>
+      <div class="speaker">MengWee · Anthony · 15 min</div>
+    </div>
+    <div>
+      <p class="lead" style="font-size: 26px; margin-bottom: 40px;">Agents spent 60% on admin. The agent platform doesn't replace them — it amplifies them.</p>
+      <div class="results">
+        <div class="res">
+          <div class="k">// Admin time</div>
+          <div class="v"><span class="from">60%</span><span class="arrow">→</span><span class="to">15%</span></div>
+          <div class="sub">18 hours/week per agent reclaimed.</div>
+        </div>
+        <div class="res">
+          <div class="k">// Conversion</div>
+          <div class="v"><span class="from">20%</span><span class="arrow">→</span><span class="to">60%</span></div>
+          <div class="sub">3× lead-to-viewing.</div>
+        </div>
+        <div class="res">
+          <div class="k">// Viewings / wk</div>
+          <div class="v"><span class="from">3</span><span class="arrow">→</span><span class="to">8</span></div>
+          <div class="sub">Same headcount.</div>
+        </div>
+        <div class="res">
+          <div class="k">// Delivery</div>
+          <div class="v"><span class="to">12 wks</span></div>
+          <div class="sub">Break-even at month four.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     21. CASE 2 — EVENT REGISTRATION
+     ============================================================ -->
+<section class="s-content" data-screen-label="21 Case 2 Events">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">05</span> · Field notes</span>
+    <span>21 / 26</span>
+  </div>
+
+  <div class="case-grid">
+    <div class="case-meta">
+      <div class="log">Log Entry · 002</div>
+      <div class="cls">Operations · Events</div>
+      <h3>Event registration,<br/><em>finished.</em></h3>
+      <div class="client">Internal · medium-sized events</div>
+      <div class="speaker">Zheng Xun · 15 min</div>
+    </div>
+    <div>
+      <p class="lead" style="font-size: 26px; margin-bottom: 40px;">Manual registration was the silent thief. The agent stitches form, database, calendar, and reminder cadence into one loop.</p>
+      <div class="results">
+        <div class="res">
+          <div class="k">// Confirmation lag</div>
+          <div class="v"><span class="from">24 h</span><span class="arrow">→</span><span class="to">2 min</span></div>
+          <div class="sub">Overnight to instant.</div>
+        </div>
+        <div class="res">
+          <div class="k">// Data errors</div>
+          <div class="v"><span class="from">8%</span><span class="arrow">→</span><span class="to">0.5%</span></div>
+          <div class="sub">Validation at the door.</div>
+        </div>
+        <div class="res">
+          <div class="k">// No-show rate</div>
+          <div class="v"><span class="from">18%</span><span class="arrow">→</span><span class="to">6%</span></div>
+          <div class="sub">Scheduled reminders, T-7 and T-1.</div>
+        </div>
+        <div class="res">
+          <div class="k">// Staff / event</div>
+          <div class="v"><span class="from">12 h</span><span class="arrow">→</span><span class="to">1.5 h</span></div>
+          <div class="sub">87% reduction.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     22. CASE 3 — EMAIL MARKETING
+     ============================================================ -->
+<section class="s-content" data-screen-label="22 Case 3 Email">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">05</span> · Field notes</span>
+    <span>22 / 26</span>
+  </div>
+
+  <div class="case-grid">
+    <div class="case-meta">
+      <div class="log">Log Entry · 003</div>
+      <div class="cls">Communications</div>
+      <h3>Email marketing,<br/><em>rewritten.</em></h3>
+      <div class="client">SME segment · monthly cadence</div>
+      <div class="speaker">Teddy · 15 min</div>
+    </div>
+    <div>
+      <p class="lead" style="font-size: 26px; margin-bottom: 40px;">The agent doesn't write your voice — it segments, drafts variants, picks send times, and re-engages non-openers.</p>
+      <div class="results">
+        <div class="res">
+          <div class="k">// Open rate</div>
+          <div class="v"><span class="from">22%</span><span class="arrow">→</span><span class="to">38%</span></div>
+          <div class="sub">+16 percentage points.</div>
+        </div>
+        <div class="res">
+          <div class="k">// Click-through</div>
+          <div class="v"><span class="from">3.5%</span><span class="arrow">→</span><span class="to">8.2%</span></div>
+          <div class="sub">2.3× engagement.</div>
+        </div>
+        <div class="res">
+          <div class="k">// Prep time</div>
+          <div class="v"><span class="from">6 h</span><span class="arrow">→</span><span class="to">45 m</span></div>
+          <div class="sub">Per campaign.</div>
+        </div>
+        <div class="res">
+          <div class="k">// Revenue / camp.</div>
+          <div class="v"><span class="to">+65%</span></div>
+          <div class="sub">YoY · like-for-like.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     23. PULL QUOTE
+     ============================================================ -->
+<section class="s-quote" data-screen-label="23 Quote">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">05</span> · Field notes</span>
+    <span>23 / 26</span>
+  </div>
+
+  <blockquote>AI doesn't replace people. It removes the <span class="hi">friction</span> that keeps them from doing their work.</blockquote>
+  <div class="by">— Ops log · 12 weeks at Nejilock</div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     24. DIVIDER 06 — HANDS-ON
+     ============================================================ -->
+<section class="s-divider" data-screen-label="24 Section 06">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">06</span> · Section</span>
+    <span>24 / 26</span>
+  </div>
+  <div class="num">06</div>
+  <div class="of">Segment six of seven</div>
+  <h2 class="name">Hands-on &amp;<br/><em>presentations.</em></h2>
+  <div class="speaker">CS · MengWee · Anthony · Harish <span class="a">·</span> 60 minutes</div>
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     25. HANDS-ON FLOW
+     ============================================================ -->
+<section class="s-content" data-screen-label="25 Hands-on flow">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">06</span> · Hands-on</span>
+    <span>25 / 26</span>
+  </div>
+
+  <div class="eyebrow">// Sixty minutes. Three or four groups.</div>
+  <h2 class="title" style="font-size: 84px; margin-bottom: 32px;">Bring a workflow.<br/>Leave with a <em>working one.</em></h2>
+
+  <div class="body">
+    <ol class="steps">
+      <li><div class="seq">/ 01</div><div><div class="step-t">Pick a workflow.</div><div class="step-b">One real PSP friction point. Map it on a page: current state · pain points · agentic opportunity.</div></div></li>
+      <li><div class="seq">/ 02</div><div><div class="step-t">Text the agent.</div><div class="step-b">Plain language via WhatsApp or Telegram. No coding. Just describe what you need done.</div></div></li>
+      <li><div class="seq">/ 03</div><div><div class="step-t">Watch it work.</div><div class="step-b">Reads the demo calendar, mailbox, files. Audit log open. Nothing hidden.</div></div></li>
+      <li><div class="seq">/ 04</div><div><div class="step-t">Iterate the prompt.</div><div class="step-b">More formal. Add a deadline. Tighten the tone. The work changes faster than a paragraph.</div></div></li>
+      <li><div class="seq">/ 05</div><div><div class="step-t">Present back.</div><div class="step-b">Five minutes. What worked. What surprised you. What you'd actually deploy on Monday.</div></div></li>
+    </ol>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     26. DIVIDER 07 — CONCLUSION + PILOT + CLOSE (combined)
+     ============================================================ -->
+<section class="s-content" data-screen-label="26 Pilot &amp; close">
+  <div class="chrome-top">
+    <span class="seg"><span class="a">07</span> · Conclusion</span>
+    <span>26 / 26</span>
+  </div>
+
+  <div class="eyebrow">// After the workshop</div>
+  <h2 class="title">A 90-day pilot,<br/><em>costed honestly.</em></h2>
+
+  <div class="body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;">
+    <div>
+      <p class="lead" style="font-size: 26px;">Two or three workflows. Five to ten users. Two training sessions and a weekly check-in. If we can't save each user five hours a week with zero security incidents, the pilot has failed — and we both know it.</p>
+      <p class="kicker" style="margin-top: 36px;">// Pilot · SGD 500 setup + SGD 599/month · 70% off the SGD 2,000/month standard rate, for the first 90 days. Success criteria: ≥5 hours saved per user per week · zero incidents · 80% satisfaction.</p>
+    </div>
+    <div style="border: 1px solid var(--hair); padding: 48px; background: var(--deep); position: relative;">
+      <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--grad);"></div>
+      <div style="font-family: var(--mono); font-size: 24px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); margin-bottom: 32px; font-weight: 600;">// Key takeaways</div>
+      <div style="display: grid; gap: 18px; font-size: 24px; line-height: 1.45; color: var(--ice);">
+        <div><strong style="color: var(--paper);">01.</strong> Agents are different from chatbots — they act.</div>
+        <div><strong style="color: var(--paper);">02.</strong> Governance first. Define boundaries before deployment.</div>
+        <div><strong style="color: var(--paper);">03.</strong> Start small. One workflow. Measure. Iterate.</div>
+        <div><strong style="color: var(--paper);">04.</strong> Human in the loop on every high-stakes action.</div>
+        <div><strong style="color: var(--paper);">05.</strong> Data sovereignty is non-negotiable.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     27. CLOSE / THANK YOU
+     ============================================================ -->
+<section class="s-close" data-screen-label="27 Close">
+  <div class="small">// End of transmission</div>
+  <h1>Thank you<br/>for <em>boarding.</em></h1>
+  <div class="contact">
+    enterprise@flowdaptor.com<br/>
+    FlowDaptor Pte Ltd · UEN 202618046R<br/><br/>
+    <a href="#">flowdaptor.com</a>
+  </div>
+  <div class="chrome-foot">
+    <span>// PSP × FlowDaptor · 27.06.26</span>
+    <span class="lock"><img class="vendor" src="assets/vendor.png" alt="FlowDaptor"/></span>
+  </div>
+</section>
+
+</deck-stage>
+
+<script src="deck-stage.js"></script>
+</body>
+</html>

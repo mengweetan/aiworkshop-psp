@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSP AI Workshop — From Generative to Agentic.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Shippori+Mincho:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   PSP × FLOWDAPTOR — Mission Briefing
+   ============================================================ */
+
+:root {
+  --void:          #02060e;
+  --deep:          #050b1a;
+  --hull:          #0a1326;
+  --bulkhead:      #0e1a33;
+  --steel:         #1a2745;
+
+  --cyan:          #5cf0ff;     /* primary accent — electric */
+  --cyan-deep:     #0ea5b8;
+  --cyan-glow:     rgba(92, 240, 255, 0.18);
+  --cyan-line:     rgba(92, 240, 255, 0.22);
+  --cyan-faint:    rgba(92, 240, 255, 0.06);
+
+  --ice:           #d7f4ff;
+  --paper:         #ffffff;
+  --mute:          #6e8eb5;
+  --mute-2:        #95b1d2;
+
+  --hot:           #ffb347;     /* warning amber — used sparingly */
+  --psp-red:       #ff3a3f;
+
+  --sans: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --serif: "Instrument Serif", "Times New Roman", serif;
+  --zen:   "Shippori Mincho", "Instrument Serif", serif;
+
+  --container: 1280px;
+
+  --t-fast: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  --t-base: 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--void);
+  color: var(--ice);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+body {
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(92, 240, 255, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(31, 95, 188, 0.18), transparent 70%),
+    var(--void);
+  background-attachment: fixed;
+}
+img { display: block; max-width: 100%; }
+
+/* Background scanline grid — barely visible */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(92, 240, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(92, 240, 255, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 80%);
+}
+
+.wrap {
+  width: min(var(--container), calc(100% - 48px));
+  margin-inline: auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   Type primitives
+   ============================================================ */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  font-weight: 500;
+}
+.eyebrow .bullet { color: var(--mute); margin: 0 8px; }
+h1, h2, h3, h4 {
+  font-family: var(--sans);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  color: var(--paper);
+}
+.display {
+  font-size: clamp(56px, 9vw, 144px);
+  line-height: 0.86;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+.display em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--cyan);
+  text-shadow: 0 0 40px rgba(92, 240, 255, 0.55);
+  letter-spacing: -0.025em;
+}
+.label-mono {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--mute-2);
+}
+.lead {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--mute-2);
+  font-weight: 400;
+  max-width: 48ch;
+}
+.value-big {
+  font-family: var(--mono);
+  font-feature-settings: "tnum", "zero";
+  font-weight: 500;
+}
+
+/* ============================================================
+   Header — mission control bar
+   ============================================================ */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(2, 6, 14, 0.72);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid var(--cyan-line);
+}
+.site-header::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--cyan) 50%, transparent 100%);
+  opacity: 0.6;
+}
+.site-header .wrap {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px; gap: 24px;
+}
+.brand {
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ice);
+}
+.brand .mark {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid var(--cyan-line);
+  display: grid; place-items: center;
+  background: var(--hull);
+  overflow: hidden;
+}
+.brand .mark img { width: 80%; height: 80%; object-fit: contain; }
+.brand .x { color: var(--cyan); font-weight: 500; opacity: 0.7; }
+.brand .sub { color: var(--mute); letter-spacing: 0.16em; }
+.brand .live {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--cyan);
+  margin-left: 4px;
+}
+.brand .live .pulse {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 0 0 var(--cyan);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(92, 240, 255, 0.8); }
+  70%  { box-shadow: 0 0 0 8px rgba(92, 240, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(92, 240, 255, 0); }
+}
+.nav {
+  display: flex; gap: 28px; align-items: center;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.nav a {
+  color: var(--mute-2);
+  text-decoration: none;
+  transition: color var(--t-fast);
+}
+.nav a:hover { color: var(--cyan); }
+.nav .btn-board {
+  padding: 9px 18px;
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  border-radius: 0;
+  background:
+    linear-gradient(135deg, rgba(92, 240, 255, 0.08), rgba(92, 240, 255, 0.02));
+  position: relative;
+  transition: all var(--t-base);
+}
+.nav .btn-board:hover {
+  background: var(--cyan);
+  color: var(--void);
+  box-shadow: 0 0 30px rgba(92, 240, 255, 0.5);
+}
+@media (max-width: 920px) {
+  .nav .nav-link { display: none; }
+  .brand .sub { display: none; }
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  padding: 60px 0 80px;
+  min-height: calc(100vh - 64px);
+  overflow: hidden;
+}
+.hero .wrap {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 48px;
+  align-items: center;
+  min-height: calc(100vh - 144px);
+}
+@media (max-width: 1000px) {
+  .hero .wrap { grid-template-columns: 1fr; gap: 56px; }
+}
+
+/* Decorative crosshair corner brackets */
+.hero::before, .hero::after {
+  content: "";
+  position: absolute;
+  width: 32px; height: 32px;
+  border: 1px solid var(--cyan-line);
+  pointer-events: none;
+}
+.hero::before { top: 80px; left: 24px; border-right: none; border-bottom: none; }
+.hero::after { bottom: 100px; right: 24px; border-left: none; border-top: none; }
+
+.hero-meta-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 56px;
+  flex-wrap: wrap; gap: 14px;
+}
+.hero-meta-top .left, .hero-meta-top .right {
+  display: flex; align-items: center; gap: 18px;
+}
+.hero-meta-top .label-mono { color: var(--cyan); }
+.hero-meta-top .sep {
+  width: 1px; height: 14px; background: var(--cyan-line);
+}
+
+.display .pre {
+  display: block;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--cyan);
+  margin-bottom: 26px;
+  letter-spacing: 0.24em;
+}
+
+.hero-sub {
+  display: grid;
+  grid-template-columns: 0.6fr 1fr;
+  gap: 48px;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--cyan-line);
+}
+@media (max-width: 760px) { .hero-sub { grid-template-columns: 1fr; gap: 24px; } }
+
+.cta-row {
+  display: flex; gap: 14px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 16px 28px;
+  border: 1px solid;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 12px;
+  transition: all var(--t-base);
+  position: relative;
+  background: transparent;
+  color: inherit;
+}
+.btn-primary {
+  background: var(--cyan);
+  color: var(--void);
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 1px var(--cyan), 0 0 40px rgba(92, 240, 255, 0.35);
+}
+.btn-primary:hover {
+  background: var(--paper);
+  border-color: var(--paper);
+  box-shadow: 0 0 0 1px var(--paper), 0 0 50px rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+.btn-ghost {
+  color: var(--ice);
+  border-color: var(--cyan-line);
+}
+.btn-ghost:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  background: rgba(92, 240, 255, 0.06);
+}
+.btn .arrow { font-family: var(--mono); font-weight: 400; }
+
+/* Hero — right column — specimen card */
+.specimen {
+  position: relative;
+  border: 1px solid var(--cyan-line);
+  background: var(--hull);
+  padding: 0;
+  box-shadow: 0 0 80px rgba(92, 240, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+.specimen::before {
+  /* tick marks on the frame */
+  content: "";
+  position: absolute;
+  inset: -6px;
+  background:
+    linear-gradient(90deg, var(--cyan) 0, var(--cyan) 24px, transparent 24px) top left / 24px 1px no-repeat,
+    linear-gradient(90deg, transparent calc(100% - 24px), var(--cyan) calc(100% - 24px)) top right / 24px 1px no-repeat,
+    linear-gradient(90deg, var(--cyan) 0, var(--cyan) 24px, transparent 24px) bottom left / 24px 1px no-repeat,
+    linear-gradient(90deg, transparent calc(100% - 24px), var(--cyan) calc(100% - 24px)) bottom right / 24px 1px no-repeat,
+    linear-gradient(180deg, var(--cyan) 0, var(--cyan) 24px, transparent 24px) top left / 1px 24px no-repeat,
+    linear-gradient(180deg, transparent calc(100% - 24px), var(--cyan) calc(100% - 24px)) bottom left / 1px 24px no-repeat,
+    linear-gradient(180deg, var(--cyan) 0, var(--cyan) 24px, transparent 24px) top right / 1px 24px no-repeat,
+    linear-gradient(180deg, transparent calc(100% - 24px), var(--cyan) calc(100% - 24px)) bottom right / 1px 24px no-repeat;
+  pointer-events: none;
+}
+.specimen .head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--cyan-line);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.specimen .head .id { color: var(--cyan); }
+.specimen .head .status {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--mute-2);
+}
+.specimen .head .status::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+.specimen .img {
+  aspect-ratio: 3 / 4.5;
+  overflow: hidden;
+  position: relative;
+}
+.specimen .img img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: contrast(1.05) saturate(1.1);
+}
+.specimen .img::after {
+  /* faint scanlines */
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0, 0, 0, 0.08) 3px, rgba(0, 0, 0, 0.08) 4px);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+.specimen .img::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(2, 6, 14, 0.85) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.specimen .legend {
+  padding: 16px 18px;
+  border-top: 1px solid var(--cyan-line);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.specimen .legend .row { display: flex; flex-direction: column; gap: 4px; }
+.specimen .legend .k { color: var(--mute); }
+.specimen .legend .v { color: var(--ice); }
+
+/* Vitals strip */
+.vitals {
+  border-top: 1px solid var(--cyan-line);
+  border-bottom: 1px solid var(--cyan-line);
+  background: rgba(10, 19, 38, 0.6);
+  padding: 0;
+  position: relative;
+}
+.vitals .wrap {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+@media (max-width: 880px) { .vitals .wrap { grid-template-columns: repeat(2, 1fr); } }
+.vital {
+  padding: 24px 20px;
+  border-left: 1px solid var(--cyan-line);
+  position: relative;
+}
+.vital:first-child { border-left: none; }
+@media (max-width: 880px) { .vital { border-left: none; border-top: 1px solid var(--cyan-line); } }
+.vital .k {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin-bottom: 8px;
+}
+.vital .v {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ice);
+  letter-spacing: -0.005em;
+}
+.vital .v .accent { color: var(--cyan); }
+
+/* ============================================================
+   Section primitives
+   ============================================================ */
+section.band {
+  padding: 140px 0 120px;
+  position: relative;
+}
+.section-head {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 64px;
+  align-items: end;
+  margin-bottom: 80px;
+}
+@media (max-width: 880px) {
+  section.band { padding: 96px 0; }
+  .section-head { grid-template-columns: 1fr; gap: 24px; margin-bottom: 48px; }
+}
+.section-head .num {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: var(--cyan);
+  position: relative;
+  padding-top: 24px;
+}
+.section-head .num::before {
+  content: ""; position: absolute; top: 0; left: 0;
+  width: 60px; height: 1px;
+  background: var(--cyan);
+}
+.section-head h2 {
+  font-size: clamp(40px, 5.5vw, 84px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 18px;
+  max-width: 16ch;
+}
+.section-head h2 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--cyan);
+  letter-spacing: -0.02em;
+}
+.section-head .kicker {
+  font-size: 17px;
+  color: var(--mute-2);
+  max-width: 56ch;
+  line-height: 1.55;
+}
+
+/* ============================================================
+   01 — FLIGHT PLAN / PROGRAMME
+   ============================================================ */
+.flight-plan {
+  border: 1px solid var(--cyan-line);
+  background: linear-gradient(180deg, rgba(10, 19, 38, 0.4), rgba(5, 11, 26, 0.6));
+}
+.flight-plan .row {
+  display: grid;
+  grid-template-columns: 80px 90px 1fr 1.1fr 90px;
+  gap: 28px;
+  padding: 22px 28px;
+  border-top: 1px solid var(--cyan-line);
+  align-items: center;
+  transition: background var(--t-fast);
+}
+.flight-plan .row:first-child { border-top: none; }
+.flight-plan .row:hover {
+  background: rgba(92, 240, 255, 0.04);
+}
+.flight-plan .row.head {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+  padding: 18px 28px;
+  background: rgba(92, 240, 255, 0.04);
+  pointer-events: none;
+}
+.flight-plan .row .seg {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--cyan);
+  letter-spacing: 0.06em;
+}
+.flight-plan .row .tminus {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--mute-2);
+  letter-spacing: 0.04em;
+}
+.flight-plan .row .topic {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 19px;
+  color: var(--paper);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+.flight-plan .row .topic .desc {
+  display: block;
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--mute-2);
+  margin-top: 6px;
+  letter-spacing: -0.005em;
+  line-height: 1.5;
+}
+.flight-plan .row .crew {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ice);
+  letter-spacing: 0.04em;
+}
+.flight-plan .row .crew .role {
+  display: block; color: var(--mute); margin-top: 4px;
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+}
+.flight-plan .row .dur {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--cyan);
+  text-align: right;
+  font-weight: 500;
+}
+@media (max-width: 880px) {
+  .flight-plan .row { grid-template-columns: 60px 1fr 80px; gap: 14px; padding: 18px; }
+  .flight-plan .row .tminus, .flight-plan .row .crew { display: none; }
+  .flight-plan .row.head { display: none; }
+}
+.flight-plan-foot {
+  padding: 22px 28px;
+  border-top: 1px solid var(--cyan);
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--mute-2);
+}
+.flight-plan-foot .total { color: var(--cyan); font-size: 13px; letter-spacing: 0.16em; }
+
+/* ============================================================
+   FULL-BLEED TRANSMISSION (video band)
+   ============================================================ */
+.transmission {
+  position: relative;
+  overflow: hidden;
+  margin-top: 40px;
+}
+.transmission .frame {
+  position: relative;
+  aspect-ratio: 21 / 9;
+  overflow: hidden;
+  background: var(--void);
+  border-top: 1px solid var(--cyan-line);
+  border-bottom: 1px solid var(--cyan-line);
+}
+.transmission video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: contrast(1.1) saturate(0.95) brightness(0.95);
+}
+.transmission .frame::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(2, 6, 14, 0.4) 0%, transparent 30%, transparent 60%, rgba(2, 6, 14, 0.9) 100%),
+    linear-gradient(90deg, rgba(2, 6, 14, 0.7) 0%, transparent 50%);
+  pointer-events: none;
+}
+.transmission .overlay {
+  position: absolute;
+  inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  padding: 48px clamp(28px, 5vw, 80px);
+  z-index: 2;
+}
+.transmission .top-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.transmission .top-bar .rec {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--cyan);
+}
+.transmission .top-bar .rec::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--psp-red);
+  box-shadow: 0 0 12px var(--psp-red);
+  animation: pulse-red 1.6s infinite;
+}
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.transmission .big {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(36px, 6vw, 86px);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--paper);
+  max-width: 18ch;
+}
+.transmission .big em {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  color: var(--cyan);
+  letter-spacing: -0.02em;
+}
+.transmission .caption-row {
+  display: flex; justify-content: space-between; align-items: end;
+  gap: 24px; flex-wrap: wrap;
+}
+.transmission .caption {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--mute-2);
+  letter-spacing: 0.1em;
+  max-width: 30ch;
+  line-height: 1.5;
+}
+.transmission .telemetry {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  text-align: right;
+  line-height: 1.7;
+}
+@media (max-width: 720px) {
+  .transmission .frame { aspect-ratio: 4 / 5; }
+  .transmission .overlay { padding: 24px; }
+}
+
+/* ============================================================
+   02 — THE SHIFT
+   ============================================================ */
+.shift-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--cyan-line);
+  margin-bottom: 64px;
+}
+@media (max-width: 880px) { .shift-grid { grid-template-columns: 1fr; } }
+.shift-card {
+  padding: 48px 40px;
+  position: relative;
+}
+.shift-card.before { background: rgba(10, 19, 38, 0.4); }
+.shift-card.after {
+  background: linear-gradient(135deg, rgba(92, 240, 255, 0.08), rgba(92, 240, 255, 0.02));
+  border-left: 1px solid var(--cyan-line);
+}
+@media (max-width: 880px) {
+  .shift-card.after { border-left: none; border-top: 1px solid var(--cyan-line); }
+}
+.shift-card .marker {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin-bottom: 28px;
+  display: flex; align-items: center; gap: 12px;
+}
+.shift-card.after .marker { color: var(--cyan); }
+.shift-card .marker .line {
+  flex: 1; height: 1px; background: currentColor; opacity: 0.4;
+}
+.shift-card h3 {
+  font-size: 44px;
+  margin-bottom: 28px;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+}
+.shift-card.after h3 em {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  color: var(--cyan); letter-spacing: -0.02em;
+}
+.shift-card ul { list-style: none; }
+.shift-card li {
+  padding: 14px 0;
+  border-top: 1px solid rgba(92, 240, 255, 0.10);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--mute-2);
+  display: grid; grid-template-columns: 28px 1fr;
+  gap: 8px;
+}
+.shift-card.after li { color: var(--ice); }
+.shift-card li::before {
+  content: attr(data-i);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--mute);
+  padding-top: 4px;
+  letter-spacing: 0.1em;
+}
+.shift-card.after li::before { color: var(--cyan); }
+
+/* Pillars row */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--cyan-line);
+}
+@media (max-width: 880px) { .pillars { grid-template-columns: 1fr; } }
+.pillar {
+  padding: 40px 32px;
+  border-left: 1px solid var(--cyan-line);
+  transition: background var(--t-base);
+  position: relative;
+}
+.pillar:first-child { border-left: none; }
+@media (max-width: 880px) { .pillar { border-left: none; border-top: 1px solid var(--cyan-line); } .pillar:first-child { border-top: none; } }
+.pillar:hover {
+  background: rgba(92, 240, 255, 0.04);
+}
+.pillar .num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 0.2em;
+  margin-bottom: 20px;
+}
+.pillar h4 {
+  font-size: 26px;
+  margin-bottom: 14px;
+  letter-spacing: -0.025em;
+  line-height: 1.0;
+}
+.pillar p {
+  font-size: 14.5px;
+  color: var(--mute-2);
+  line-height: 1.55;
+}
+
+/* ============================================================
+   03 — OPS LOGS / CASE STUDIES
+   ============================================================ */
+.cases {
+  border-top: 1px solid var(--cyan-line);
+}
+.case {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 80px;
+  padding: 72px 0;
+  border-bottom: 1px solid var(--cyan-line);
+  position: relative;
+}
+@media (max-width: 880px) {
+  .case { grid-template-columns: 1fr; gap: 36px; padding: 48px 0; }
+}
+.case .meta {
+  position: sticky; top: 100px; align-self: start;
+}
+.case .meta .log-id {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--cyan);
+  margin-bottom: 12px;
+}
+.case .meta .class {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+  padding: 4px 10px;
+  border: 1px solid var(--cyan-line);
+  display: inline-block;
+  margin-bottom: 32px;
+}
+.case .meta h3 {
+  font-size: 44px;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin-bottom: 16px;
+}
+.case .meta h3 em {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  color: var(--cyan); letter-spacing: -0.02em;
+}
+.case .meta .client {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--mute-2);
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.case .meta .speaker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mute);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.case .body .problem {
+  font-size: 16.5px;
+  color: var(--mute-2);
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 56ch;
+}
+.results {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--cyan-line);
+}
+.res {
+  padding: 28px 28px;
+  border-left: 1px solid var(--cyan-line);
+  border-top: 1px solid var(--cyan-line);
+}
+.res:nth-child(-n + 2) { border-top: none; }
+.res:nth-child(2n + 1) { border-left: none; }
+.res .k {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin-bottom: 14px;
+}
+.res .v {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--paper);
+  letter-spacing: -0.015em;
+  line-height: 1;
+  font-feature-settings: "tnum", "zero";
+}
+.res .v .from { color: var(--mute-2); }
+.res .v .arrow { color: var(--cyan); padding: 0 4px; font-weight: 400; }
+.res .v .to { color: var(--cyan); }
+.res .sub {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--mute);
+  margin-top: 10px;
+  letter-spacing: -0.005em;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   PULL QUOTE
+   ============================================================ */
+.pull {
+  padding: 160px 0;
+  text-align: center;
+  position: relative;
+  background:
+    radial-gradient(ellipse 50% 80% at 50% 50%, rgba(92, 240, 255, 0.12), transparent 70%),
+    var(--void);
+  border-top: 1px solid var(--cyan-line);
+  border-bottom: 1px solid var(--cyan-line);
+}
+.pull blockquote {
+  font-family: var(--serif);
+  font-size: clamp(34px, 5vw, 72px);
+  font-style: italic;
+  line-height: 1.05;
+  font-weight: 400;
+  color: var(--paper);
+  letter-spacing: -0.02em;
+  max-width: 22ch;
+  margin: 0 auto;
+}
+.pull blockquote .hi {
+  color: var(--cyan);
+  text-shadow: 0 0 60px rgba(92, 240, 255, 0.6);
+}
+.pull .by {
+  margin-top: 40px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+/* ============================================================
+   04 — HANDS-ON / SIMULATION
+   ============================================================ */
+.sim-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 48px;
+}
+@media (max-width: 880px) { .sim-grid { grid-template-columns: 1fr; gap: 32px; } }
+.steps {
+  list-style: none;
+  border-top: 1px solid var(--cyan-line);
+}
+.steps li {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--cyan-line);
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 24px;
+}
+.steps .seq {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--cyan);
+  letter-spacing: 0.2em;
+  padding-top: 4px;
+}
+.steps .step-title {
+  font-family: var(--sans);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--paper);
+  letter-spacing: -0.025em;
+  margin-bottom: 8px;
+  line-height: 1.05;
+}
+.steps .step-body {
+  font-size: 14.5px;
+  color: var(--mute-2);
+  line-height: 1.55;
+  max-width: 52ch;
+}
+.sim-side {
+  background: var(--hull);
+  border: 1px solid var(--cyan-line);
+  padding: 36px 32px;
+  align-self: start;
+  position: sticky; top: 100px;
+}
+.sim-side .label-mono { color: var(--cyan); margin-bottom: 14px; }
+.sim-side h4 {
+  font-size: 26px;
+  margin-bottom: 24px;
+  letter-spacing: -0.025em;
+  line-height: 1.0;
+}
+.sim-side ul { list-style: none; }
+.sim-side li {
+  padding: 12px 0;
+  border-top: 1px solid rgba(92, 240, 255, 0.1);
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--mute-2);
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 12px;
+  line-height: 1.5;
+}
+.sim-side li:first-child { border-top: none; }
+.sim-side .domain {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  padding-top: 2px;
+}
+
+/* ============================================================
+   05 — PILOT / DEPLOYMENT
+   ============================================================ */
+.deploy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+@media (max-width: 880px) { .deploy-grid { grid-template-columns: 1fr; gap: 40px; } }
+.deploy-card {
+  border: 1px solid var(--cyan-line);
+  background: linear-gradient(180deg, rgba(10, 19, 38, 0.6), rgba(5, 11, 26, 0.8));
+  padding: 48px 40px;
+  position: relative;
+}
+.deploy-card .badge {
+  position: absolute;
+  top: -1px; right: 32px;
+  background: var(--cyan);
+  color: var(--void);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 6px 14px;
+}
+.deploy-card h4 {
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  margin-bottom: 32px;
+}
+.tier {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  padding: 20px 0;
+  border-top: 1px solid var(--cyan-line);
+  align-items: center;
+}
+.tier:first-of-type { border-top: 1px solid var(--cyan); }
+.tier .name {
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--paper);
+  letter-spacing: -0.015em;
+}
+.tier .name .sub {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--mute-2);
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.tier .price {
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--cyan);
+  text-align: right;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.tier .price .u {
+  display: block;
+  font-size: 10.5px;
+  color: var(--mute);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+.deploy-card .foot {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(92, 240, 255, 0.1);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--mute-2);
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--cyan-line);
+  padding: 80px 0 40px;
+  background: var(--deep);
+  position: relative;
+}
+.site-footer::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+}
+.site-footer .wrap {
+  display: grid;
+  grid-template-columns: 1.6fr 0.7fr 0.7fr 1fr;
+  gap: 48px;
+}
+@media (max-width: 880px) { .site-footer .wrap { grid-template-columns: 1fr 1fr; gap: 32px; } }
+.colophon {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 28px;
+  color: var(--paper);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin-bottom: 18px;
+  max-width: 16ch;
+}
+.colophon em { color: var(--cyan); font-style: italic; }
+.site-footer .copy {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--mute-2);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+}
+.site-footer h5 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--cyan);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+.site-footer ul { list-style: none; }
+.site-footer li { padding: 4px 0; }
+.site-footer a {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ice);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: color var(--t-fast);
+}
+.site-footer a:hover { color: var(--cyan); }
+.footer-bar {
+  margin-top: 56px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(92, 240, 255, 0.12);
+  display: flex; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+@media (max-width: 600px) {
+  .footer-bar { flex-direction: column; gap: 10px; }
+}
+
+::selection { background: var(--cyan); color: var(--void); }
+.anchor { position: relative; top: -80px; visibility: hidden; pointer-events: none; }
+
+</style>
+</head>
+<body>
+
+<!-- ============== HEADER ============== -->
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">
+      <div class="mark"><img src="assets/psp-logo.jpg" alt="PSP" /></div>
+      <span>PSP</span>
+      <span class="x">×</span>
+      <span>FLOWDAPTOR</span>
+      <span class="sub">/ MISSION 27·06·26</span>
+      <span class="live"><span class="pulse"></span> LIVE</span>
+    </div>
+    <nav class="nav">
+      <a class="nav-link" href="#plan">Flight plan</a>
+      <a class="nav-link" href="#shift">The shift</a>
+      <a class="nav-link" href="#logs">Ops logs</a>
+      <a class="nav-link" href="#sim">Simulation</a>
+      <a class="btn-board" href="#deploy">[ BOARD ]</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="hero-meta-top">
+        <div class="left">
+          <span class="label-mono">PSP × FLOWDAPTOR / WORKING SESSION</span>
+        </div>
+        <div class="right">
+          <span class="label-mono">27.06.2026</span>
+          <span class="sep"></span>
+          <span class="label-mono">SAT 14:00 SGT</span>
+        </div>
+      </div>
+
+      <h1 class="display">
+        <span class="pre">A three-hour transmission</span>
+        From generative<br/>
+        to <em>agentic.</em>
+      </h1>
+
+      <div class="hero-sub">
+        <div class="label-mono" style="color: var(--cyan);">
+          OBJECTIVE<br/>
+          <span style="color: var(--mute); display: block; margin-top: 6px; letter-spacing: 0.06em;">/ /  brief crew on AI agents · governance · deployment · live tooling</span>
+        </div>
+        <p class="lead">AI that does not just answer — AI that <em>acts.</em> A three-hour working session for PSP staff and volunteers on building, governing, and trusting AI agents inside a real organisation.</p>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#deploy">Reserve a seat <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="#plan">Read the dossier <span class="arrow">↓</span></a>
+      </div>
+    </div>
+
+    <div>
+      <div class="specimen">
+        <div class="head">
+          <span class="id">SPECIMEN — 01 / OPENCLAW</span>
+          <span class="status">SIGNAL OK</span>
+        </div>
+        <div class="img">
+          <img src="assets/DOG.jpeg" alt="Astronaut shiba inu in a space station corridor" />
+        </div>
+        <div class="legend">
+          <div class="row"><span class="k">Class</span><span class="v">Agentic / IV</span></div>
+          <div class="row"><span class="k">Origin</span><span class="v">SG · 2026</span></div>
+          <div class="row"><span class="k">Frame</span><span class="v">OpenClaw Δ</span></div>
+          <div class="row"><span class="k">Capacity</span><span class="v">30 seats</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== VITALS ============== -->
+<section class="vitals">
+  <div class="wrap">
+    <div class="vital">
+      <div class="k">// Coordinates</div>
+      <div class="v">PSP HQ <span class="accent">·</span> SG</div>
+    </div>
+    <div class="vital">
+      <div class="k">// Window</div>
+      <div class="v">14:00 — 17:00 <span class="accent">SGT</span></div>
+    </div>
+    <div class="vital">
+      <div class="k">// Duration</div>
+      <div class="v">195 <span class="accent">MIN</span></div>
+    </div>
+    <div class="vital">
+      <div class="k">// Crew</div>
+      <div class="v">7 <span class="accent">facilitators</span></div>
+    </div>
+    <div class="vital">
+      <div class="k">// Capacity</div>
+      <div class="v">30 <span class="accent">/ 30 seats</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 01 — FLIGHT PLAN ============== -->
+<span id="plan" class="anchor"></span>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">SEG.01 / FLIGHT PLAN</div>
+      <div>
+        <h2>Seven segments,<br/><em>one trajectory.</em></h2>
+        <p class="kicker">Definition → governance → architecture → live deployments → your own keyboard. Each segment has a lead facilitator. If a topic doesn't land, that's the moment to ask.</p>
+      </div>
+    </div>
+
+    <div class="flight-plan">
+      <div class="row head">
+        <div>SEG.</div>
+        <div>T-MINUS</div>
+        <div>OBJECTIVE</div>
+        <div>CREW</div>
+        <div>DURATION</div>
+      </div>
+
+      <div class="row">
+        <div class="seg">i.</div>
+        <div class="tminus">T+00:00</div>
+        <div class="topic">
+          AI introduction &amp; governance
+          <span class="desc">What AI is, what it isn't, and the five things to settle before you let it touch your data.</span>
+        </div>
+        <div class="crew">HARISH <span class="role">Lead</span></div>
+        <div class="dur">20 MIN</div>
+      </div>
+
+      <div class="row">
+        <div class="seg">ii.</div>
+        <div class="tminus">T+00:20</div>
+        <div class="topic">
+          Overview of AI agents
+          <span class="desc">From chatbots to agents — memory, tools, action.</span>
+        </div>
+        <div class="crew">CS CHONG <span class="role">Lead</span></div>
+        <div class="dur">15 MIN</div>
+      </div>
+
+      <div class="row">
+        <div class="seg">iii.</div>
+        <div class="tminus">T+00:35</div>
+        <div class="topic">
+          Risk &amp; deployment model
+          <span class="desc">Risk matrix · SaaS · on-prem · hybrid · PSP data zones.</span>
+        </div>
+        <div class="crew">MENGWEE <span class="role">Lead</span></div>
+        <div class="dur">15 MIN</div>
+      </div>
+
+      <div class="row">
+        <div class="seg">iv.</div>
+        <div class="tminus">T+00:50</div>
+        <div class="topic">
+          Possible applications &amp; deep dive
+          <span class="desc">Five scenarios an agent could handle. Architecture, end-to-end.</span>
+        </div>
+        <div class="crew">MENGWEE <span class="role">Lead</span></div>
+        <div class="dur">30 MIN</div>
+      </div>
+
+      <div class="row">
+        <div class="seg">v.</div>
+        <div class="tminus">T+01:20</div>
+        <div class="topic">
+          Field notes — three case studies
+          <span class="desc">RE brokering · event registration · email marketing AI. Numbers, not slogans.</span>
+        </div>
+        <div class="crew">MENGWEE · ZX · TEDDY <span class="role">Practitioners</span></div>
+        <div class="dur">45 MIN</div>
+      </div>
+
+      <div class="row">
+        <div class="seg">vi.</div>
+        <div class="tminus">T+02:05</div>
+        <div class="topic">
+          Hands-on &amp; group presentations
+          <span class="desc">Three groups · one workflow each · live tools · five-minute report back.</span>
+        </div>
+        <div class="crew">CS · MENGWEE · ANTHONY · HARISH <span class="role">Facilitators</span></div>
+        <div class="dur">60 MIN</div>
+      </div>
+
+      <div class="row">
+        <div class="seg">vii.</div>
+        <div class="tminus">T+03:05</div>
+        <div class="topic">
+          Conclusion &amp; next steps
+          <span class="desc">Pilot programme, follow-ups, what we'd commit to before October.</span>
+        </div>
+        <div class="crew">SECGEN <span class="role">Closing</span></div>
+        <div class="dur">10 MIN</div>
+      </div>
+
+      <div class="flight-plan-foot">
+        <span>// DOORS 13:45 · LIGHT SNACKS THROUGHOUT</span>
+        <span class="total">∑ 195 MIN · 3H 15M</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSMISSION video band — between Programme and The Shift -->
+  <div class="transmission">
+    <div class="frame">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/hero.mp4" type="video/mp4" />
+      </video>
+      <div class="overlay">
+        <div class="top-bar">
+          <span class="rec">LIVE TRANSMISSION</span>
+          <span>// FEED 0427 · CH.12 · SGT</span>
+        </div>
+        <div></div>
+        <div>
+          <div class="big">The agent is <em>already moving.</em></div>
+          <div class="caption-row" style="margin-top: 28px;">
+            <p class="caption">Recovered footage from a 12-week deployment. We bring the raw feed, not the highlight reel.</p>
+            <div class="telemetry">
+              ALT 412KM · VEL 7.6 KM/S<br/>
+              SIGNAL · 96.4%<br/>
+              CREW · 1
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 02 — THE SHIFT ============== -->
+<span id="shift" class="anchor"></span>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">SEG.02 / DELTA</div>
+      <div>
+        <h2>A chatbot answers.<br/>An agent <em>acts.</em></h2>
+        <p class="kicker">Most of what was called "AI" until last year was a polite text generator on the end of a chat box. The agentic delta is small in the prompt, large in the consequence — agents read your files, hold context across sessions, and execute multi-step tasks until done.</p>
+      </div>
+    </div>
+
+    <div class="shift-grid">
+      <div class="shift-card before">
+        <div class="marker"><span>BEFORE / 2022–2024</span><span class="line"></span></div>
+        <h3>The chatbot.</h3>
+        <ul>
+          <li data-i="01">Responds to prompts. Forgets you between sessions.</li>
+          <li data-i="02">Text in, text out. No file system, no tools.</li>
+          <li data-i="03">One conversation at a time. No schedules. No callbacks.</li>
+          <li data-i="04">Cannot take action — it can only describe one.</li>
+        </ul>
+      </div>
+      <div class="shift-card after">
+        <div class="marker"><span>NOW / 2025–2026</span><span class="line"></span></div>
+        <h3>The <em>agent.</em></h3>
+        <ul>
+          <li data-i="01">Proactively monitors. Acts on your behalf, within rules you set.</li>
+          <li data-i="02">Reads email, calendars, files, APIs, databases.</li>
+          <li data-i="03">Runs scheduled and parallel workflows. Wakes itself.</li>
+          <li data-i="04">Logs every action. Asks before the irreversible.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="num">/ 01 — GOVERNANCE</div>
+        <h4>Settled before plug-in.</h4>
+        <p>Data sovereignty, transparency, accountability, PDPA compliance, human oversight — defined <em>before</em> the agent is connected to a single mailbox, not after.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">/ 02 — LOCAL-FIRST</div>
+        <h4>Your hull, your rules.</h4>
+        <p>Sensitive data stays on your infrastructure. Models are hot-swappable. The agent runs where you do, not where the vendor wants you to.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">/ 03 — HUMAN IN LOOP</div>
+        <h4>AI proposes. You approve.</h4>
+        <p>High-stakes actions wait for a human. Every step logged, reviewable, reversible. Never a black box.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 03 — OPS LOGS ============== -->
+<span id="logs" class="anchor"></span>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">SEG.03 / OPS LOGS</div>
+      <div>
+        <h2>What it looks like,<br/>after the <em>slogans.</em></h2>
+        <p class="kicker">Three live deployments. Each began as a workshop very much like this one. We bring the numbers, not the marketing.</p>
+      </div>
+    </div>
+
+    <div class="cases">
+      <article class="case">
+        <div class="meta">
+          <div class="log-id">LOG ENTRY · 001</div>
+          <div class="class">CLASSIFICATION / PROPERTY · BROKERAGE</div>
+          <h3>RE brokering, <em>freed.</em></h3>
+          <div class="client">Client — Nejilock Technology · 40+ agents</div>
+          <div class="speaker">Reported by MengWee · Anthony</div>
+        </div>
+        <div class="body">
+          <p class="problem">Agents spent 60% of every week on admin — searching three portals, copy-pasting twenty listings, phone-tagging for viewings, forgetting follow-ups. Lead-to-viewing conversion stuck at 20%. The agent platform doesn't replace agents; it amplifies them.</p>
+          <div class="results">
+            <div class="res">
+              <div class="k">// Admin time</div>
+              <div class="v"><span class="from">60%</span><span class="arrow">→</span><span class="to">15%</span></div>
+              <div class="sub">18 hours per agent reclaimed per week.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Conversion</div>
+              <div class="v"><span class="from">20%</span><span class="arrow">→</span><span class="to">60%</span></div>
+              <div class="sub">3× lead-to-viewing.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Viewings / wk</div>
+              <div class="v"><span class="from">3</span><span class="arrow">→</span><span class="to">8</span></div>
+              <div class="sub">Same headcount, more closes.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Delivery</div>
+              <div class="v"><span class="to">12 wks</span></div>
+              <div class="sub">Break-even at month four.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="meta">
+          <div class="log-id">LOG ENTRY · 002</div>
+          <div class="class">CLASSIFICATION / OPERATIONS · EVENTS</div>
+          <h3>Event registration, <em>finished.</em></h3>
+          <div class="client">Internal · medium-sized events</div>
+          <div class="speaker">Reported by ZX</div>
+        </div>
+        <div class="body">
+          <p class="problem">Manual registration was the silent thief — 24-hour confirmation lag, 8% data-entry errors, dietary needs and accessibility lost in spreadsheets, last-minute changes patched by hand. The agent stitches form, database, calendar, and reminder cadence into one loop.</p>
+          <div class="results">
+            <div class="res">
+              <div class="k">// Confirmation lag</div>
+              <div class="v"><span class="from">24 h</span><span class="arrow">→</span><span class="to">2 min</span></div>
+              <div class="sub">From overnight to nearly instant.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Data errors</div>
+              <div class="v"><span class="from">8%</span><span class="arrow">→</span><span class="to">0.5%</span></div>
+              <div class="sub">Validation at the door.</div>
+            </div>
+            <div class="res">
+              <div class="k">// No-show rate</div>
+              <div class="v"><span class="from">18%</span><span class="arrow">→</span><span class="to">6%</span></div>
+              <div class="sub">Scheduled reminders, T-7 and T-1.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Staff / event</div>
+              <div class="v"><span class="from">12 h</span><span class="arrow">→</span><span class="to">1.5 h</span></div>
+              <div class="sub">87% reduction.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="meta">
+          <div class="log-id">LOG ENTRY · 003</div>
+          <div class="class">CLASSIFICATION / COMMUNICATIONS</div>
+          <h3>Email marketing, <em>rewritten.</em></h3>
+          <div class="client">SME segment · monthly cadence</div>
+          <div class="speaker">Reported by Teddy</div>
+        </div>
+        <div class="body">
+          <p class="problem">Generic mass mail had stalled at industry-average opens. The agent doesn't write your voice for you — it segments the list, drafts three tonal variants, picks send times, and re-engages non-openers with a different angle. Humans approve every send.</p>
+          <div class="results">
+            <div class="res">
+              <div class="k">// Open rate</div>
+              <div class="v"><span class="from">22%</span><span class="arrow">→</span><span class="to">38%</span></div>
+              <div class="sub">+16 percentage points.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Click-through</div>
+              <div class="v"><span class="from">3.5%</span><span class="arrow">→</span><span class="to">8.2%</span></div>
+              <div class="sub">2.3× engagement.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Prep time</div>
+              <div class="v"><span class="from">6 h</span><span class="arrow">→</span><span class="to">45 m</span></div>
+              <div class="sub">Per campaign.</div>
+            </div>
+            <div class="res">
+              <div class="k">// Revenue / camp.</div>
+              <div class="v"><span class="to">+65%</span></div>
+              <div class="sub">Year-over-year, like-for-like.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PULL QUOTE ============== -->
+<section class="pull">
+  <div class="wrap">
+    <blockquote>AI doesn't replace people. It removes the <span class="hi">friction</span> that keeps them from doing their work.</blockquote>
+    <div class="by">— OPS LOG · 12 WEEKS AT NEJILOCK</div>
+  </div>
+</section>
+
+<!-- ============== 04 — SIMULATION ============== -->
+<span id="sim" class="anchor"></span>
+<section class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">SEG.04 / SIMULATION</div>
+      <div>
+        <h2>Bring a workflow.<br/>Leave with a <em>working one.</em></h2>
+        <p class="kicker">The last hour belongs to you. Three or four groups, one PSP workflow each, a facilitator at the elbow, a live agent on the table. We end with a five-minute presentation per group — not a slide, an actual result.</p>
+      </div>
+    </div>
+
+    <div class="sim-grid">
+      <ol class="steps">
+        <li>
+          <div class="seq">/ 01</div>
+          <div>
+            <div class="step-title">Pick a workflow.</div>
+            <div class="step-body">Choose one real PSP friction point. Map it on a single page: current state · pain points · the agentic opportunity.</div>
+          </div>
+        </li>
+        <li>
+          <div class="seq">/ 02</div>
+          <div>
+            <div class="step-title">Text the agent.</div>
+            <div class="step-body">Send a plain-language request via WhatsApp or Telegram. No coding, no console — just describe what you need done.</div>
+          </div>
+        </li>
+        <li>
+          <div class="seq">/ 03</div>
+          <div>
+            <div class="step-title">Watch it work.</div>
+            <div class="step-body">The agent accesses the demo calendar, mailbox, and files. Read the audit log line-by-line; nothing it does is hidden.</div>
+          </div>
+        </li>
+        <li>
+          <div class="seq">/ 04</div>
+          <div>
+            <div class="step-title">Iterate the prompt.</div>
+            <div class="step-body">Make it more formal. Add a deadline reminder. Tighten the tone. The shape of the work changes faster than a paragraph in a document.</div>
+          </div>
+        </li>
+        <li>
+          <div class="seq">/ 05</div>
+          <div>
+            <div class="step-title">Present back.</div>
+            <div class="step-body">Five minutes to your group. What worked, what surprised you, what you would actually deploy on Monday.</div>
+          </div>
+        </li>
+      </ol>
+
+      <aside class="sim-side">
+        <div class="label-mono">// PICK YOUR DOMAIN</div>
+        <h4>Five places to start.</h4>
+        <ul>
+          <li><span class="domain">EVENTS</span><span>Registration, reminders, post-event surveys, photo organisation.</span></li>
+          <li><span class="domain">COMMS</span><span>Newsletter drafting, member inquiries, announcement scheduling.</span></li>
+          <li><span class="domain">OPS</span><span>Meeting minutes, action-item tracking, document search.</span></li>
+          <li><span class="domain">FINANCE</span><span>Expense logging, reimbursement, budget monitoring.</span></li>
+          <li><span class="domain">MEMBERSHIP</span><span>Onboarding, renewal reminders, engagement tracking.</span></li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 05 — DEPLOYMENT ============== -->
+<span id="deploy" class="anchor"></span>
+<section class="band" style="padding-bottom: 160px;">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">SEG.05 / DEPLOYMENT</div>
+      <div>
+        <h2>A 90-day pilot,<br/><em>costed honestly.</em></h2>
+        <p class="kicker">Two or three workflows. Five to ten users. Two training sessions and a weekly check-in. If we can't save each user five hours a week with zero security incidents, the pilot has failed — and we both know it.</p>
+      </div>
+    </div>
+
+    <div class="deploy-grid">
+      <div>
+        <div class="cta-row" style="margin-bottom: 32px;">
+          <a class="btn btn-primary" href="mailto:enterprise@flowdaptor.com?subject=PSP%20pilot%20interest">Initiate boarding <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href="mailto:enterprise@flowdaptor.com">Open channel <span class="arrow">↗</span></a>
+        </div>
+        <p class="lead">A pilot is not a sale. It's a 90-day controlled deployment with explicit kill criteria. If the numbers don't materialise, we don't go to phase two — and you keep everything we built.</p>
+      </div>
+
+      <div class="deploy-card">
+        <span class="badge">40% PSP discount · first 90 days</span>
+        <h4 style="margin-top: 18px;">// THREE PHASES</h4>
+        <div class="tier">
+          <div class="name">Pilot
+            <span class="sub">1–2 workflows · 5 users · 90 days · 2 training sessions</span>
+          </div>
+          <div class="price">SGD 300<span class="u">+ S$100 / month</span></div>
+        </div>
+        <div class="tier">
+          <div class="name">Standard
+            <span class="sub">5+ workflows · 20 users · integrations · ongoing support</span>
+          </div>
+          <div class="price">SGD 2,000<span class="u">+ S$500 / month</span></div>
+        </div>
+        <div class="tier">
+          <div class="name">Enterprise
+            <span class="sub">On-premise · unlimited users · SLA · compliance audit</span>
+          </div>
+          <div class="price">Bespoke<span class="u">on request</span></div>
+        </div>
+        <div class="foot">SUCCESS CRITERIA — ≥ 5 hours saved per user per week · zero security incidents · 80% user satisfaction over the trial window.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <p class="colophon">Build what does the work. <em>Then trust it.</em></p>
+      <p class="copy">A PSP × FlowDaptor working session.<br/>Built in Singapore. The husky came along.</p>
+    </div>
+    <div>
+      <h5>// MISSION</h5>
+      <ul>
+        <li><a href="#plan">Flight plan</a></li>
+        <li><a href="#shift">The shift</a></li>
+        <li><a href="#logs">Ops logs</a></li>
+        <li><a href="#sim">Simulation</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>// AFTER</h5>
+      <ul>
+        <li><a href="#deploy">90-day pilot</a></li>
+        <li><a href="mailto:enterprise@flowdaptor.com">Email follow-up</a></li>
+        <li><a href="mailto:support@flowdaptor.com">Support</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>// CHANNEL</h5>
+      <p class="copy">enterprise@flowdaptor.com<br/>FlowDaptor Pte Ltd<br/>UEN 202618046R</p>
+    </div>
+  </div>
+  <div class="wrap footer-bar">
+    <span>© 2026 · FLOWDAPTOR PTE LTD · PREPARED FOR PSP</span>
+    <span>V.2 · 27.06.2026</span>
+  </div>
+</footer>
+
+<script>
+  // Smooth anchor scroll with header offset
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (href === '#') return;
+      const el = document.querySelector(href);
+      if (!el) return;
+      e.preventDefault();
+      const y = el.getBoundingClientRect().top + window.scrollY - 64;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+      history.replaceState(null, '', href);
+    });
+  });
+</script>
+
+</body>
+</html>
